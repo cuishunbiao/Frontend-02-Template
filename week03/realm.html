@@ -16,59 +16,59 @@
   <iframe id="iframeId" src="javascript:var b = {}" frameborder="0"></iframe>
   <script>
 
-var set = new Set();
-var objects = [
-    eval,
-    isFinite,
-    isNaN,
-    parseFloat,
-    parseInt,
-    decodeURI,
-    decodeURIComponent,
-    encodeURI,
-    encodeURIComponent,
-    Array,
-    Date,
-    RegExp,
-    Promise,
-    Proxy,
-    Map,
-    WeakMap,
-    Set,
-    WeakSet,
-    Function,
-    Boolean,
-    String,
-    Number,
-    Symbol,
-    Object,
-    Error,
-    EvalError,
-    RangeError,
-    ReferenceError,
-    SyntaxError,
-    TypeError,
-    URIError,
-    ArrayBuffer,
-    SharedArrayBuffer,
-    DataView,
-    Float32Array,
-    Float64Array,
-    Int8Array,
-    Int16Array,
-    Int32Array,
-    Uint8Array,
-    Uint16Array,
-    Uint32Array,
-    Uint8ClampedArray,
-    Atomics,
-    JSON,
-    Math,
-    Reflect];
-objects.forEach(o => set.add(o));
+// var set = new Set();
+// var objects = [
+//     eval,
+//     isFinite,
+//     isNaN,
+//     parseFloat,
+//     parseInt,
+//     decodeURI,
+//     decodeURIComponent,
+//     encodeURI,
+//     encodeURIComponent,
+//     Array,
+//     Date,
+//     RegExp,
+//     Promise,
+//     Proxy,
+//     Map,
+//     WeakMap,
+//     Set,
+//     WeakSet,
+//     Function,
+//     Boolean,
+//     String,
+//     Number,
+//     Symbol,
+//     Object,
+//     Error,
+//     EvalError,
+//     RangeError,
+//     ReferenceError,
+//     SyntaxError,
+//     TypeError,
+//     URIError,
+//     ArrayBuffer,
+//     SharedArrayBuffer,
+//     DataView,
+//     Float32Array,
+//     Float64Array,
+//     Int8Array,
+//     Int16Array,
+//     Int32Array,
+//     Uint8Array,
+//     Uint16Array,
+//     Uint32Array,
+//     Uint8ClampedArray,
+//     Atomics,
+//     JSON,
+//     Math,
+//     Reflect];
+// objects.forEach(o => set.add(o));
 
-for(var i = 0; i < objects.length; i++) {
-    var o = objects[i]
+// for(var i = 0; i < objects.length; i++) {
+//     var o = objects[i]
     /**
      * Object.getOwnPropertyNames 找到当前对象所有的属性
      * 例：Array 返回  ["length", "name", "prototype", "isArray", "from", "of"] 
@@ -101,22 +101,128 @@ for(var i = 0; i < objects.length; i++) {
   //   console.log(Object.getOwnPropertyNames(o));
   //   console.log('----')
   //  }
-    for(var p of Object.getOwnPropertyNames(o)) {
-        //Object.getOwnPropertyDescriptor(o,p) 返回自身的属性
-        var d = Object.getOwnPropertyDescriptor(o, p);
-        //访问器属性 是没有 value 的，value !== null 就是数据属性
-        if( (d.value !== null && typeof d.value === "object") || (typeof d.value === "function"))
-            if(!set.has(d.value))
-                set.add(d.value), objects.push(d.value);
-        if( d.get )
-            if(!set.has(d.get))
-                set.add(d.get), objects.push(d.get);
-        if( d.set )
-            if(!set.has(d.set))
-                set.add(d.set), objects.push(d.set);
-    }
-}
-console.log(set);
+//     for(var p of Object.getOwnPropertyNames(o)) {
+//         //Object.getOwnPropertyDescriptor(o,p) 返回自身的属性
+//         var d = Object.getOwnPropertyDescriptor(o, p);
+//         //访问器属性 是没有 value 的，value !== null 就是数据属性
+//         if( (d.value !== null && typeof d.value === "object") || (typeof d.value === "function"))
+//             if(!set.has(d.value))
+//                 set.add(d.value), objects.push(d.value);
+//         if( d.get )
+//             if(!set.has(d.get))
+//                 set.add(d.get), objects.push(d.get);
+//         if( d.set )
+//             if(!set.has(d.set))
+//                 set.add(d.set), objects.push(d.set);
+//     }
+// }
+
+
+
+// function teacherFindAB(arr){
+//   let findA = false;
+//   for(let i of arr){
+//     if( i == 'a' ){
+//       findA = true;
+//     }else if( findA && i == 'b' ){
+//       return true;
+//     }else{
+//       findA = false;
+//     }
+//   }
+//   return false;
+// }
+
+// console.log(teacherFindAB('cuishunbiao'))
+
+
+// function foundString(string){
+//   let foundA = false;
+//   let foundB = false;
+//   let foundC = false;
+//   let foundD = false;
+//   let foundE = false;
+  
+//   for( let str of string ){
+//     if( str == 'a' && !foundB && !foundC && !foundD && !foundE ){
+//       foundA = true;
+//     }else if( foundA && !foundC && !foundD && !foundE && str == 'b'){
+//       foundB = true;
+//     }else if( foundB && !foundC && !foundD && !foundE && str == 'c' ){
+//       foundC = true;
+//     }else if( foundC && !foundD && !foundE && str == 'd' ){
+//       foundD = true;    
+//     }else if( foundD && !foundE && str == 'e' ){
+//       foundE = true;
+//       return true;
+//     }else{
+//       foundA = false;
+//       foundB = false;
+//       foundC = false;
+//       foundD = false;
+//       foundE = false;
+//     }
+//   }
+//   return false;
+// }
+// console.log(foundString('I am abcbee'));
+
+
+//有限状态机
+  // function foundString(string){
+  //   let state = foundA;//赋值 初始值
+  //   for( let i of string){
+  //     state = state(i);
+  //   }
+  //   return state === end;//判断是否查询到最后一条
+  // }
+
+  // function foundA(i){
+  //   if( i === 'a' )
+  //     return foundB;
+  //   else
+  //     return foundA;
+  // }
+
+  // function foundB(i){
+  //   if( i === 'b' )
+  //     return foundC;
+  //   else
+  //     return foundA(i);
+  // }
+
+  // function foundC(i){
+  //   if( i === 'c' )
+  //     return foundD;
+  //   else
+  //     return foundA(i);
+  // }
+
+  // function foundD(i){
+  //   if( i === 'd' )
+  //     return foundE;
+  //   else
+  //     return foundA(i);
+  // }
+
+  // function foundE(i){
+  //   if( i === 'e' )
+  //     return end;
+  //   else
+  //     return foundA(i);
+  // }
+
+  // function end(i){
+  //   return end;
+  // }
+
+  // console.log(foundString('ababcde'));
+
+
+
+
+  
+
   </script>
 </body>
 </html>
