@@ -1,3 +1,5 @@
+const net = require('net');
+
 class Request{
     constructor(options){
         this.methods = options.methods || 'GET';
@@ -21,10 +23,58 @@ class Request{
 
     }
     
-    send(){
-        return new Promise((resole,reject)=>{
-            resole(this.bodyText)
+    send(connection){
+        return new Promise((resolve,reject)=>{
+            let parser = new ResponseParser;
+            if ( connection ){
+                //toString 是自己的方法
+                connection.write(this.toString());//发送数据
+            }else{
+                connection = net.createConnection({
+                    port: this.port,
+                    host: this.host
+                },()=>{
+                    connection.write(this.toString());//发送数据
+                })
+            }
+
+            connection.on('data',(data)=>{
+                //接收数据
+                console.log(data.toString());
+                parser.receive(data.toString());
+                if( parser.isFinished ){
+                    resolve(parser.response)
+                    connection.end();
+                }
+            })
+
+            connection.on('error',(err)=>{
+                reject(err);
+                connection.end();
+            })
+
         })
+    }
+
+    toString(){
+        console.log(`${this.methods} ${this.path} HTTP/1.1\r
+${Object.keys(this.headers).map(key => `${key}:${this.headers[key]}`).join('\r\n')}\r\r
+${this.bodyText}`)
+        return `${this.methods} ${this.path} HTTP/1.1\r
+${Object.keys(this.headers).map(key => `${key}:${this.headers[key]}`).join('\r\n')}\r\r
+${this.bodyText}`;
+    }
+}
+
+class ResponseParser{
+    constructor(){}
+    receive(string){
+        for( let i=0; i<string.length; i++ ){
+            this.reveiveChar = string.charAt(i);
+        }
+    }
+    reveiveChar(char){
+
     }
 }
 
@@ -32,7 +82,7 @@ void async function(){
     let request = new Request({
         methods:'POST',
         host:"127.0.0.1",
-        port:'8808',
+        port:'8088',
         path:'/',
         headers:{
             ["X-Foo2"]:"customed"
@@ -43,5 +93,10 @@ void async function(){
         }
     })
     let reslove = await request.send();
-    console.log(reslove)
+    console.log(reslove);
+    // reslove.then(res=>{
+    //     console.log(res)
+    // }).catch(error=>{
+    //     console.log(error);
+    // })
 }();
