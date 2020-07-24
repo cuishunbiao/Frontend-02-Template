@@ -16,7 +16,7 @@ HTTP.createServer(function(request,response){
         //body = Buffer.concat(body).toString();
         console.log('body:',body);
         response.writeHead(200,{'Content-Type':'text/html'});
-        response.end(' Hello World\n')
+        response.end(' Hello')
     })
 }).listen(8088)
 
