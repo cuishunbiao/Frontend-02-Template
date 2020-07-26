@@ -1,4 +1,5 @@
 const net = require('net');
+const parser = require('./parser.js');
 
 class Request{
     constructor(options){
@@ -40,9 +41,10 @@ class Request{
 
             connection.on('data',(data)=>{
                 //接收数据
-                console.log(data.toString());
                 parser.receive(data.toString());
+                console.log(JSON.stringify(data.toString()))
                 if( parser.isFinished ){
+                    console.log('isFinished true')
                     resolve(parser.response)
                     connection.end();
                 }
@@ -99,12 +101,17 @@ class ResponseParser {
     }
 
     get response(){
+        this.statusLine.match(/HTTP\/1.1 ([0-9]*) ([\s\S]+)/);
         return {
-            statusCode: 1
+            statusCode: RegExp.$1,
+            statusText: RegExp.$2,
+            headers: this.headers,
+            body: this.bodyParser.content.join('')
         }
     }
 
     receive(string) {
+        console.log(string)
         for (let i = 0; i < string.length; i++) {
             this.reveiveChar(string.charAt(i));
         }
@@ -186,12 +193,44 @@ class TrunkedBodyParser{
                 this.length += parseInt(char,16)
             }
         }else if( this.current === this.WAITING_LENGTH_LINE_END ){
-            if( char === '\n' ){
-                this.current = this.READING_TRUNK
+            /**
+             * 受同学指点，在 isFinished = true 后，不需要再继续拼装信息了；
+             * 因为已经找到 16 进制的 0 了，这是最后一个字符，body 体就结束了；
+             * 可以使用 !this.isFinished 来判断
+             * 也可以增加一个 状态机码 来判断
+             * this.WAITING_FINISHED = 5;
+             * if( this.length === 0 ){
+             *      this.isFinished = true;
+             *      this.current = this.WAITING_FINISHED
+             * }else{
+             *      this.current = this.WAITING_LENGTH_LINE_END;
+             * }
+             * if( this.current === this.WAITING_FINISHED ){
+             *      return;
+             * }
+             * 
+             * 疑问？
+             * 因为 0 后面还有 \r\n，所以收集的 body 体是不对的，所以
+             * 导致在 response 使用 RegExp.$1 和 RegExp.$2 是出错的。
+             * 
+             */
+            if (char === '\n' ){
+                if ( this.isFinished ){
+                    this.current === this.WAITING_NEW_LINE
+                }else{
+                    this.current = this.READING_TRUNK
+                }
             }
         }else if( this.current === this.READING_TRUNK ){
             this.content.push(char);
             this.length --;
+            /**
+             * 关于最后这个 length 的问题，为什么加了 !isFinished 就不生效了呢
+             * 为什么最后还会再跟两个 \r\n \r\n 呢？
+             * 第一个 \r\n 是 body 体结束
+             * 第二个 \r\n 是 chunk 体结束
+             * 后面跟的这两个 \r\n 是一个完整的 chunk 体
+             * */
             if( this.length === 0 ){
                 this.current = this.WAITING_NEW_LINE
             }
@@ -221,11 +260,8 @@ void async function(){
             shun:'23232',
         }
     })
-    let reslove = await request.send();
-    console.log(reslove);
-    // reslove.then(res=>{
-    //     console.log(res)
-    // }).catch(error=>{
-    //     console.log(error);
-    // })
+    let response = await request.send();
+    console.log(response);
+    console.log(JSON.stringify(response.body))
+    let dom = parser.parseHTML(response.body)
 }();
