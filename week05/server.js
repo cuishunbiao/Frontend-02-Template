@@ -1,4 +1,3 @@
-
 //加载 HTTP 模块
 const HTTP = require('http');
 console.log('start');
@@ -17,18 +16,26 @@ HTTP.createServer(function(request,response){
         console.log('body:',body);
         response.writeHead(200,{'Content-Type':'text/html'});
         response.end(`<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
-        <style>
-            p{ font-size: 16px; }
-            .header .content{ color:red; }
-        </style>
-    </head>
     <body>
+        <div class="header">
+            <div class="content"></div>
+        </div>
         <p>ppp</p>
     </body>
 </html>`)
+//         response.end(`<html lang="en">
+//     <head>
+//         <style>
+//             p{ font-size: 16px; }
+//             .header .content{ color:red; font-size:20px }
+//         </style>
+//     </head>
+//     <body>
+//         <div class="header">
+//             <span class="content"></span>
+//         </div>
+//         <p>ppp</p>
+//     </body>
+// </html>`)
     })
 }).listen(8088)

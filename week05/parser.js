@@ -12,10 +12,26 @@ let stack = [{
 let rules = [];
 function addCSSRules(text){
   var ast = css.parse(text);
-  debugger
   console.log(JSON.stringify(ast,null,"    "))
   rules.push(...ast.stylesheet.rules);
 }
+
+/**
+ * 立即计算 css
+ * 当我们分析一个元素的时候，所有的 css 规则已经收集完毕。
+ * stack 里面有所有元素的父元素
+ * 必须要知道父元素
+ * slice();复制一遍数组，栈里面的元素会变化，防止污染
+ * div div #myid
+ * 
+ */
+function computeCSS(element){
+  var elements = stack.slice().reverse();//复制数组，标签匹配从当前元素向外匹配，需要一级一级向外找；
+
+  console.log(rules);
+  console.log('compute for css element',element);
+}
+
 
 //什么是 对偶 操作？
 //创建完需要做输出
@@ -37,6 +53,8 @@ function emit(token) {
         })
       }
     }
+    computeCSS(element);//原则上讲，在开始标签就已经知道会匹配哪些 Css 了
+
     top.children.push(element);
     element.parent = top;
 
@@ -50,7 +68,6 @@ function emit(token) {
       throw new Error('Tag start end doesn\'t match!')
     }else{
       if( top.tagName === 'style' ){
-        debugger
         addCSSRules(top.children[0].content);//读取到 style 里 css 内容
       }
       stack.pop()
@@ -300,9 +317,11 @@ function selfClosingStartTag(c) {
 module.exports.parseHTML = function parseHTML(html) {
   let state = data;//默认开始方式为 data
   for (let c of html) {
+    debugger
     state = state(c)
   }
   state = state(EOF);
+  debugger
   return stack[0]
 }
 
