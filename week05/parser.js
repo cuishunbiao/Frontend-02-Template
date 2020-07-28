@@ -12,8 +12,49 @@ let stack = [{
 let rules = [];
 function addCSSRules(text){
   var ast = css.parse(text);
-  console.log(JSON.stringify(ast,null,"    "))
+  //console.log(JSON.stringify(ast,null,"    "))
   rules.push(...ast.stylesheet.rules);
+  //console.log(rules)
+}
+
+/**
+ * 匹配 element 和 selector
+ * 只有三种 div / #div / .div
+ * ----------------element - start -------------
+ *  attributes:(1) [{
+ *    name: 'class',
+ *    value: 'header'
+ *  }]
+ * length:1
+ * children:(0) []
+ * tagName:'div'
+ * type:'element'
+ *  ----------------element - end -------------
+ * selector 就是 .content 或者 .header 这种选择器，单个的选择器
+ * 为什么不用 element == String 这种方式？
+ */
+function match(element, selector){
+  //没有传入选择器，或者 element 没有属性，即 element 数组没有长度，返false
+  if( !selector || !element.attributes ){
+    return false;
+  }
+  //获取 selector 第一个字符，去做匹配
+  if( selector.charAt(0) == "#" ){
+    var attr = element.attributes.filter(attr => attr.name === 'id')[0];
+    if (attr && attr.value === selector.replace('#','') ){
+      return true;
+    }
+  }else if( selector.charAt(0) == '.' ){
+    var attr = element.attributes.filter(attr => attr.name === 'class')[0];
+    if( attr && attr.value === selector.replace('.','') ){
+      return true
+    }
+  }else{
+    if( element.tagName === selector ){
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -26,16 +67,79 @@ function addCSSRules(text){
  * 
  */
 function computeCSS(element){
+  /**
+   *  attributes:(1) [{
+   *    name: 'lang',
+   *    value: 'en'
+   *  }]
+   * children:(0) []
+   * tagName:'html'
+   * type:'element'
+   *
+   * -------------------- div -------------
+   *  attributes:(1) [{
+   *    name: 'class', value: 'header'
+   *  }]
+   * length:1
+   * children:(0) []
+   * tagName:'div'
+   * type:'element'
+   *
+   */
   var elements = stack.slice().reverse();//复制数组，标签匹配从当前元素向外匹配，需要一级一级向外找；
+  if( !element.computedStyle ){
+    element.computedStyle = {}
+  }
 
-  console.log(rules);
-  console.log('compute for css element',element);
+  for(let rule of rules){
+    //如果是 [.header,.content] 这个复合数组就会转成 [.content,.header]
+    var selectorParts = rule.selectors[0].split(" ").reverse();
+
+    //先去匹配第一个数组 也就是 .content，如果没有匹配成功，退出这次循环
+    if( !match(element,selectorParts[0]) ){
+      continue;
+    }
+
+    let matched = false;//先定义一个变量
+
+    /**
+     * 如果第一个 .content 匹配成功了，就会去继续向下匹配；
+     * 所以 j = 1，因为 j=0的那步，上面执行了。
+     * 接下来匹配 .header 如果上面还有 class 就会去继续匹配
+     * 一直循环下去 类似于： .bodyContent .container .header .content
+     * 
+     * */
+    
+    var j = 1;
+    for(var i = 0; i<elements.length; i++){
+      if( match(elements[i],selectorParts[j]) ){
+        j++
+      }
+    }
+    /**
+     * selectorParts.length 是 css 生成的 css 数组的长度
+     * j++ 说明匹配成功了，如果所有数组都匹配成功，那么 j 的长度最少是 selectorParts 的长度
+     * 为什么要用 >= 应该用 > 就可以了啊？因为 j 是从 1 开始的。
+     * 
+     */
+    if( j >= selectorParts.length ){
+      matched = true;
+    }
+    if( matched ){
+      console.log("Element",element,"matched rule",rule);
+    }
+
+  }
+
+  // console.log(rules);
+  // console.log('compute for css element',element);
 }
 
 
 //什么是 对偶 操作？
 //创建完需要做输出
 function emit(token) {
+  console.log(stack);
   let top = stack[stack.length - 1];//先计算好当前数组最下面是什么标签，以在 endTag 做闭合使用
   if (token.type == 'startTag') {
     let element = {
@@ -56,6 +160,7 @@ function emit(token) {
     computeCSS(element);//原则上讲，在开始标签就已经知道会匹配哪些 Css 了
 
     top.children.push(element);
+
     element.parent = top;
 
     if (!token.isSelfClosing) {
@@ -83,6 +188,7 @@ function emit(token) {
     }
     currentTextNode.content += token.content;
   }
+
 }
 
 const EOF = Symbol("EOF");//定义一个唯一属性，做为结束使用
@@ -317,11 +423,9 @@ function selfClosingStartTag(c) {
 module.exports.parseHTML = function parseHTML(html) {
   let state = data;//默认开始方式为 data
   for (let c of html) {
-    debugger
     state = state(c)
   }
   state = state(EOF);
-  debugger
   return stack[0]
 }
 
