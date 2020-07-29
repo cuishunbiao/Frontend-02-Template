@@ -1,7 +1,7 @@
 const css = require('css');
 
-let currentToken = null;// tag 是按 token 处理的
-let currentAttribute = null;//全局的属性
+let currentToken = null;// tag 是按 token 处理的，当前开始标签
+let currentAttribute = null;//属性，当前属性
 let currentTextNode = null;
 //默认的栈
 let stack = [{
@@ -9,6 +9,7 @@ let stack = [{
   children: []
 }]
 
+//使用 css 库去把 css 生成出来
 let rules = [];
 function addCSSRules(text){
   var ast = css.parse(text);
@@ -126,9 +127,15 @@ function computeCSS(element){
       matched = true;
     }
     if( matched ){
-      console.log("Element",element,"matched rule",rule);
+      var computedStyle = element.computedStyle;
+      for(let declaration of rule.declarations){
+        if( !computedStyle[declaration.property] ){
+          computedStyle[declaration.property] = {}
+        }
+        computedStyle[declaration.property] = declaration.value
+        console.log(computedStyle);
+      }
     }
-
   }
 
   // console.log(rules);
@@ -139,7 +146,7 @@ function computeCSS(element){
 //什么是 对偶 操作？
 //创建完需要做输出
 function emit(token) {
-  console.log(stack);
+  //console.log(stack);
   let top = stack[stack.length - 1];//先计算好当前数组最下面是什么标签，以在 endTag 做闭合使用
   if (token.type == 'startTag') {
     let element = {
