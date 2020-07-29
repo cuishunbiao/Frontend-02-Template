@@ -34,6 +34,7 @@ function addCSSRules(text){
  * 为什么不用 element == String 这种方式？
  */
 function match(element, selector){
+  debugger
   //没有传入选择器，或者 element 没有属性，即 element 数组没有长度，返false
   if( !selector || !element.attributes ){
     return false;
@@ -78,7 +79,8 @@ function computeCSS(element){
    *
    * -------------------- div -------------
    *  attributes:(1) [{
-   *    name: 'class', value: 'header'
+   *    name: 'class',
+   *    value: 'header'
    *  }]
    * length:1
    * children:(0) []
@@ -163,6 +165,7 @@ function emit(token) {
 
     element.parent = top;
 
+    //如果不是自闭合标签，在当前数组下面添加一行
     if (!token.isSelfClosing) {
       stack.push(element);
     }
@@ -423,6 +426,7 @@ function selfClosingStartTag(c) {
 module.exports.parseHTML = function parseHTML(html) {
   let state = data;//默认开始方式为 data
   for (let c of html) {
+    debugger
     state = state(c)
   }
   state = state(EOF);
