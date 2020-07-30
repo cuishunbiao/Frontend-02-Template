@@ -1,4 +1,5 @@
 const css = require('css');
+const layout = require('./layout.js');
 
 let currentToken = null;// tag 是按 token 处理的，当前开始标签
 let currentAttribute = null;//属性，当前属性
@@ -35,7 +36,6 @@ function addCSSRules(text){
  * 为什么不用 element == String 这种方式？
  */
 function match(element, selector){
-  debugger
   //没有传入选择器，或者 element 没有属性，即 element 数组没有长度，返false
   if( !selector || !element.attributes ){
     return false;
@@ -95,7 +95,7 @@ function computeCSS(element){
   }
 
   for(let rule of rules){
-    //如果是 [.header,.content] 这个复合数组就会转成 [.content,.header]
+    //如果是 selectors 结构[.header,.content] 这个复合数组就会转成 [.content,.header]
     var selectorParts = rule.selectors[0].split(" ").reverse();
 
     //先去匹配第一个数组 也就是 .content，如果没有匹配成功，退出这次循环
@@ -120,6 +120,8 @@ function computeCSS(element){
       }
     }
     /**
+     * selectors: ['.header .content'] //结构
+     * 
      * selectorParts.length 是 css 生成的 css 数组的长度
      * j++ 说明匹配成功了，如果所有数组都匹配成功，那么 j 的长度最少是 selectorParts 的长度
      * 为什么要用 >= 应该用 > 就可以了啊？因为 j 是从 1 开始的。
@@ -129,13 +131,19 @@ function computeCSS(element){
       matched = true;
     }
     if( matched ){
+      var sp = specificity(rule.selectors[0]);
       var computedStyle = element.computedStyle;
       for(let declaration of rule.declarations){
         if( !computedStyle[declaration.property] ){
           computedStyle[declaration.property] = {}
         }
-        computedStyle[declaration.property] = declaration.value
-        console.log(computedStyle);
+        if ( !computedStyle[declaration.property].specificity ){
+          computedStyle[declaration.property].value = declaration.value;
+          computedStyle[declaration.property].specificity = sp;
+        }else if( compare(computedStyle[declaration.property].specificity,sp) < 0){
+          computedStyle[declaration.property].value = declaration.value;
+          computedStyle[declaration.property].specificity = sp;
+        }
       }
     }
   }
@@ -144,6 +152,45 @@ function computeCSS(element){
   // console.log('compute for css element',element);
 }
 
+/**
+ * 四元组计算 css 的优先级
+ * 怎样处理 复合选择器
+ * 有 div div #img
+ * div,.span{}
+ * div.divImg
+ * div > .content
+ * 
+ * 
+ *  
+ */
+function specificity(selector) {
+  var p = [0,0,0,0];
+  var selectorParts = selector.split(' ');
+  for (let selectorPart of selectorParts){
+    if (selectorPart.charAt(0) === '#' ){
+      p[1] += 1;
+    }else if( selectorPart.charAt(0) === '.' ){
+      p[2] += 1;
+    }else{
+      p[3] += 1;
+    }
+  }
+  return p;
+}
+
+
+function compare(sp1, sp2){
+  if( sp1[0] - sp2[0] ){
+    return sp1[0] - sp2[0]
+  }
+  if( sp1[1] - sp2[1] ){
+    return sp1[1] - sp2[1]
+  }
+  if( sp1[2] - sp2[2] ){
+    return sp1[2] - sp2[2]
+  }
+  return sp1[3] - sp2[3];
+}
 
 //什么是 对偶 操作？
 //创建完需要做输出
@@ -185,6 +232,7 @@ function emit(token) {
       if( top.tagName === 'style' ){
         addCSSRules(top.children[0].content);//读取到 style 里 css 内容
       }
+      layout(top);
       stack.pop()
     }
     currentTextNode = null;
@@ -198,8 +246,8 @@ function emit(token) {
     }
     currentTextNode.content += token.content;
   }
-
 }
+
 
 const EOF = Symbol("EOF");//定义一个唯一属性，做为结束使用
 
@@ -433,7 +481,6 @@ function selfClosingStartTag(c) {
 module.exports.parseHTML = function parseHTML(html) {
   let state = data;//默认开始方式为 data
   for (let c of html) {
-    debugger
     state = state(c)
   }
   state = state(EOF);
