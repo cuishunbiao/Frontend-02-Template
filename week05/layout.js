@@ -263,7 +263,53 @@ function layout(element){
         }
     }else{
         flexLines.forEach((items)=>{
-            
+            var mainSpace = items.mainSpace;
+            var flexTotal = 0;
+            for( var i=0;i<item.length;i++ ){
+                var item = items[i];
+                var itemStyle = getStyle(item);
+
+                if( (itemStyle.flex !== null) && (itemStyle.flex !== (void 0)) ){
+                    flexTotal += itemStyle.flex;
+                    continue;
+                }
+
+            }
+
+            if( flexTotal > 0 ){
+                var currentMain = mainBase;
+                for(var i=0;i<item.length;i++){
+                    var item = items[i];
+                    var itemStyle = getStyle[item];
+
+                    if( itemStyle.flex ){
+                        itemStyle[mainSize] = (mainSize / flexTotal) * itemStyle.flex;
+                    }
+
+                    itemStyle[mainStart] = currentMain;
+                    itemStyle[mainEnd] = itemStyle[mainStart] + mainSign * itemStyle[mainSize]
+                    currentMain = itemStyle[mainEnd]
+
+                }
+            }else{
+                if( style.justifyContent === 'flex-start' ){
+                    var currentMain = mainBase;
+                    var step = 0;
+                }
+                if( style.justifyContent === 'flex-end' ){
+                    var currentMain = mainSpace * mainSign + mainBase;
+                    var step = 0;
+                }
+                if( style.justifyContent === 'center' ){
+                    var currentMain = mainSpace / 2 * mainSign + mainBase;
+                    var step = 0;
+                }
+                if( style.justifyContent === 'space-between' ){
+                    var step = mainSpace / items.length & mainSign;
+                    var currentMain = step
+                }
+            }
+
         })
     }
 
