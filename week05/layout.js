@@ -58,26 +58,40 @@ function layout(element){
         return;
     }
     var elementStyle = getStyle(element);//处理 css
+    debugger
 
     //如果不是 flex 直接退出
     if( elementStyle.display != 'flex' ) return;
 
-    //过滤文本节点
-    var item = element.children.filter(e => e.type === 'element');
-
-    item.sort(function(a,b){
+    //过滤文本节点，文本节点就是 \r\n 
+    var items = element.children.filter(e => e.type === 'element');
+    // order 的目的是什么？
+    items.sort(function(a,b){
         return (a.order || 0) - (b.order || 0)
     })
 
     var style = elementStyle;
-
+    //如果没有 width 属性，设置成空
     ['width','height'].forEach(size=>{
         if( style[size] === 'auto' || style[size] === '' ){
             style[size] = null;
         }
     })
-
-    //设置默认值，确保属性有默认值
+    /**
+     * 当前是这样的状态
+     * display: 'flex'
+     * width: 600
+     * 下面是需要添加的默认属性
+     *  添加完后的效果
+        alignContent: 'stretch'
+        alignItems: 'stretch'
+        display: 'flex'
+        flexDirection: 'row'
+        flexWrap: 'nowrap'
+        justifyContent: 'flex-start'
+        width: 600
+     */
+    debugger
     if( !style.flexDirection || style.flexDirection === 'auto' ){
         style.flexDirection = 'row';
     }
@@ -93,7 +107,8 @@ function layout(element){
     if( !style.alignContent || style.alignContent === 'auto' ){
         style.alignContent = 'stretch'
     }
-
+    
+    debugger
     /**
      * mainSize 主轴尺寸，宽 高
      * mainStart 开始方向 left/right 可能为 top/bottom
@@ -180,7 +195,7 @@ function layout(element){
     //定义行
     var flexLine = [];
     var flexLines = [flexLine];
-
+    //主轴的空间大小
     var mainSpace = elementStyle[mainSize];
     var crossSpace = 0;
 
@@ -201,6 +216,7 @@ function layout(element){
             }
             flexLine.push(item);
         }else{
+            //如果当前元素的空间大于父元素的空间，就换算成一样的大小
             if( itemStyle[mainSize] > style[mainSize] ){
                 itemStyle[mainSize] = style[mainSize]
             }
@@ -222,7 +238,37 @@ function layout(element){
         }
     }
     flexLines.mainSpace = mainSpace;
-    console.log(items)
+    //根据 flex 属性来分配每一行的 mainSpace
+
+    if( style.flexWrap === 'nowrap' || isAutoMainSize ){
+        flexLine.crossSpace = (style[crosssSize] !== undefined ? style[crossSize] : crossSpace)
+    }else{
+        flexLine.crossSpace = crossSpace;
+    }
+
+    if( mainSpace < 0 ){
+        var scale = style[mainSize] / (style[mainSize] - mainSpace);
+        var currentMain = mainBase;
+        for(var i=0;i<items.length;i++){
+            var item = items[i];
+            var itemStyle = getStyle(item);
+            if( itemStyle.flex ){
+                itemStyle[mainSize] = 0;
+            }
+            itemStyle[mainSize] = itemStyle[mainSize] * scale;
+
+            itemStyle[mainStart] = currentMain;
+            itemStyle[mainStart] = itemStyle[mainStart] + mainSign * itemStyle[mainSize];
+            currentMain = itemStyle[mainEnd];
+        }
+    }else{
+        flexLines.forEach((items)=>{
+            
+        })
+    }
+
+
+    console.log(flexLines)
 }
 
 module.exports = layout;

@@ -19,13 +19,15 @@ HTTP.createServer(function(request,response){
         response.end(`<html lang="en">
     <head>
         <style>
-            p{ font-size: 16px; }
-            .header .content{ color:red; font-size:18px; }
+            .container{ width:600px; display:flex; }
+            .container .left{ color:red; font-size:18px; width:200px; }
+            .container .right{ flex:1; background-color:#f00; }
         </style>
     </head>
     <body>
-        <div class="header">
-            <span class="content"></span>
+        <div class="container">
+            <div class="left" />
+            <div class="right" />
         </div>
         <p>ppp</p>
     </body>
