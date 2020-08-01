@@ -105,7 +105,6 @@ function layout(element){
         style.alignContent = 'stretch'
     }
     
-    debugger
     /**
      * mainSize 主轴尺寸，宽 高
      * mainStart 开始方向 left/right 可能为 top/bottom
@@ -188,7 +187,6 @@ function layout(element){
         }
         isAutoMainSize = true;
     }
-
     //定义行
     var flexLine = [];
     var flexLines = [flexLine];
@@ -232,17 +230,16 @@ function layout(element){
                 crossSpace = Math.max(crossSpace, itemStyle[crossSize]);
             }
             mainSpace -= itemStyle[mainSize]
+            mainBase = itemStyle[mainSize];
         }
     }
     flexLines.mainSpace = mainSpace;
     //根据 flex 属性来分配每一行的 mainSpace
-
     if( style.flexWrap === 'nowrap' || isAutoMainSize ){
-        flexLine.crossSpace = (style[crosssSize] !== undefined ? style[crossSize] : crossSpace)
+        flexLine.crossSpace = (style[crossSize] !== undefined ? style[crossSize] : crossSpace)
     }else{
         flexLine.crossSpace = crossSpace;
     }
-
     if( mainSpace < 0 ){
         var scale = style[mainSize] / (style[mainSize] - mainSpace);
         var currentMain = mainBase;
@@ -260,25 +257,22 @@ function layout(element){
         }
     }else{
         flexLines.forEach((items)=>{
-            var mainSpace = items.mainSpace;
+            var mainSpace = flexLines.mainSpace;
             var flexTotal = 0;
-            for( var i=0;i<item.length;i++ ){
+            for (var i = 0; i < items.length;i++ ){
                 var item = items[i];
                 var itemStyle = getStyle(item);
-
                 if( (itemStyle.flex !== null) && (itemStyle.flex !== (void 0)) ){
                     flexTotal += itemStyle.flex;
                     continue;
                 }
-
             }
 
             if( flexTotal > 0 ){
                 var currentMain = mainBase;
-                for(var i=0;i<item.length;i++){
+                for(var i=0;i<items.length;i++){
                     var item = items[i];
-                    var itemStyle = getStyle[item];
-
+                    var itemStyle = getStyle(item);
                     if( itemStyle.flex ){
                         itemStyle[mainSize] = (mainSpace / flexTotal) * itemStyle.flex;
                     }
@@ -330,7 +324,9 @@ function layout(element){
     }else{
         crossSpace = style[crossSize];
         for(var i=0;i<flexLines.length;i++){
-            crossSpace -= flexLines[i].crossSpace
+            if (flexLines[i].crossSpace ){
+                crossSpace -= flexLines[i].crossSpace
+            }
         }
     }
 
@@ -341,7 +337,7 @@ function layout(element){
     }
     var lineSize = style[crossSize] / flexLine.length;
     var step;
-    if( style.alignContent === 'flex-start' ){
+    if (style.alignContent === 'flex-start' ){
         crossBase += 0;
         step = 0;
     }
@@ -357,7 +353,7 @@ function layout(element){
         step =crossSpace / (flexLines.length);
         crossBase += crossSign * step / 2;
     }
-    if( step.alignContent === 'stretch' ){
+    if( style.alignContent === 'stretch' ){
         crossBase += 0;
         step = 0;
     }
@@ -371,7 +367,7 @@ function layout(element){
             var itemStyle = getStyle(item);
             var align = itemStyle.alignSelf || style.alignItems;
             
-            if( itemStyle[crossSize] === null ){
+            if( itemStyle[crossSize] === null || !itemStyle[crossSize]){
                 itemStyle[crossSize] = (align === 'stretch') ? lineCrossSize : 0
             }
 
@@ -392,7 +388,7 @@ function layout(element){
 
             if( align === 'stretch' ){
                 itemStyle[crossStart] = crossBase;
-                itemStyle[crossEnd] = crossBase + crossSign * ((itemStyle[crossSize] !== null && itemStyle[crossSize]))
+                itemStyle[crossEnd] = crossBase + crossSign * ((itemStyle[crossSize] !== null) && itemStyle[crossSize]);
                 itemStyle[crossSize] = crossSign * (itemStyle[crossEnd] - itemStyle[crossStart])
             }
 

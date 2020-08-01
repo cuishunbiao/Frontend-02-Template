@@ -159,8 +159,6 @@ function computeCSS(element){
  * div,.span{}
  * div.divImg
  * div > .content
- * 
- * 
  *  
  */
 function specificity(selector) {
@@ -217,7 +215,7 @@ function emit(token) {
 
     top.children.push(element);
 
-    element.parent = top;
+    //element.parent = top;
 
     //如果不是自闭合标签，在当前数组下面添加一行
     if (!token.isSelfClosing) {
@@ -484,6 +482,7 @@ module.exports.parseHTML = function parseHTML(html) {
     state = state(c)
   }
   state = state(EOF);
+  console.log(JSON.stringify(stack[0],null,'    '))
   return stack[0]
 }
 
