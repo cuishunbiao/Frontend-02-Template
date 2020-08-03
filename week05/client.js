@@ -1,5 +1,7 @@
 const net = require('net');
+const images = require('images');
 const parser = require('./parser.js');
+const render = require('./render.js')
 
 class Request{
     constructor(options){
@@ -261,5 +263,10 @@ void async function(){
         }
     })
     let response = await request.send();
-    let dom = parser.parseHTML(response.body)
+    let dom = parser.parseHTML(response.body);
+
+    //汇制 html
+    let viewport = images(1000, 600);
+    render(viewport,dom);
+    viewport.save("viewport.jpg");
 }();
