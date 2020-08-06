@@ -1,33 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-
-        例子：选择器计数
-        #id div.a#id --- [0,2,1,1]
-        S = 0 * N^3 + 2 * N^2 + 1 * N^1 + 1;
+以前老版本的 IE 浏览器，255个 class 相当于 一个 id 选择器。
+后来就改成了 65536 。
+再后来，就改成了更大的数值。
 
 
-        div#a.b .c[id=x] 0 1 3 1 
-
-
-        #a:not(#b) 0 2 0 0 
-        
-        
-        *.a 0 0 1 0 
-        
-        
-        div.a 0 0 1 1
-
-    <style>
-        
-    </style>
+简单选择器？
+复合选择器？
 
 
 
-</body>
-</html>
+1、千位
+如果是内联样式，记为 1 ，否则为 0 ；
+
+2、百位
+选择器中所有的 id 选择器的数量；
+
+3、十位
+选择器中所有的类选择器，属性选择器，伪类选择器的数量
+
+4、个位
+选择器中所有的元素选择器，伪元素选择器
+
+通配符选择器不参与运算，为 0000
+
+#abc .abc div = 0111
+
+#abc .abc .ab div = 0121
+
+#abc .abc div p = 0112
+
+div#a.b .c[id=x] = 0131
+
+#a:not(#b) = 0210
+
+*.a = 0010
+
+div.a = 0011
+
+
+官方的例子：
+#s12:not(FOO)   /* a=1 b=0 c=1 */
+老师的例子：
+#a:not(#b) /* a=2 b=0 c=0 */
+我的例子：
+#a:not(#b) = /* a=2 b=1 c=0 */
+
+:not :where :is 这些伪类是怎样计算权重的？
+
