@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>match</title>
+</head>
+<body>
+
+    <div id="parentId">
+        <div id="id" class="class">你好</div>
+    </div>
+
+<script>
+    let currentElement,selectorLength,currentLength = 0;
+    function match(selector, element) {
+        currentElement = element;
+        let selectorArr = selector.split(" ");
+        selectorLength = selectorArr.length;
+        let state = startFn;
+        for (let select of selectorArr) {
+            state = state(select);
+        }
+        
+        console.log(state);
+
+    }
+
+    function startFn(select){
+        let is_match = false;
+        if (select === currentElement.tagName.toLowerCase()) {
+            console.log('匹配了标签');
+            is_match = true;
+        } else if (
+            currentElement.id && select.includes(`#${currentElement.id}`) && currentElement.className &&
+            select.includes(`.${currentElement.className}`)
+        ) {
+            console.log("匹配 id 和 class");
+            is_match = true;
+        } else if (currentElement.id && select.includes(`#${currentElement.id}`)) {
+            console.log("匹配 id");
+            is_match = true;
+        } else if (currentElement.className && select.includes(`.${currentElement.className}`)) {
+            console.log("匹配 class");
+            is_match = true;
+        }
+
+        if( is_match ){
+            currentElement = currentElement.children;
+            currentLength++;
+            if( selectorLength === currentLength ){
+                return true;
+            }else{
+                return matchChildrenFn;
+            }
+        }else{
+            return false;
+        }
+
+    }
+
+    function matchChildrenFn(select){
+        for( let child of currentElement ){
+            let is_match = false;
+            if (select === child.tagName.toLowerCase()) {
+                console.log('匹配了标签');
+                is_match = true;
+            } else if (
+                child.id && select.includes(`#${child.id}`) && child.className && 
+                select.includes(`.${child.className}`)
+            ) {
+                console.log("匹配 id 和 class");
+                is_match = true;
+            } else if (child.id && select.includes(`#${child.id}`)) {
+                console.log("匹配 id");
+                is_match = true;
+            } else if (child.className && select.includes(`.${child.className}`)) {
+                console.log("匹配 class");
+                is_match = true;
+            }
+
+            if( is_match ){
+                currentElement = currentElement.children;
+                currentLength++;
+                if( selectorLength === currentLength ){
+                    return true;
+                }else{
+                    return matchChildrenFn;
+                }
+            }else{
+                return false;
+            }
+        }
+    }
+
+
+    match("div #id.class", document.getElementById("parentId"));
+
+
+</script>
+</body>
+</html>
