@@ -6,21 +6,45 @@
     <title>Document</title>
 </head>
 <body>
-    
-<p>This is a somewhat long HTML
-    paragraph that will be broken into several
-    lines. The first line will be identified
-    by a fictional tag sequence. The other lines
-    will be treated as ordinary lines in the
-    paragraph.</p>
-
-    <style>
+    <p><p:first-line>内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内</p:first-line>容内容内容内容内容内容内容内容内容内容内容内容</p> 
+<style>
         
-p::first-line { 
+/* div::first-line { 
     text-transform: uppercase;
     font-size:2em;
-    float:left; 
+    float: right;
+    padding: 100px;
+    float: right;
+    color: skyblue;
 }
+div::first-letter{
+    color: red;
+}
+div p{
+    color: royalblue;
+} */
+/* span{
+    display: block;
+}
+span::first-letter{
+    color: red;
+} */
+/* div span{
+    float: left;
+}
+div::first-line{
+    color: red;
+} */
+
+/* 
+
+    1、只有块级元素才能设置 first-line ；
+    2、因为第一行的长度有非常多的考虑因素：包括页面的长度、字体的大小等；
+    3、first-line 相当于一个行内元素；
+    4、float 会把行内元素转换成块级元素，会影响到兄弟元素；
+    5、如果 first-line 设置了 flost 会脱离文档流，没办法计算当前元素的第一行的起始位置和结束位置。
+
+ */
     </style>
 </body>
 </html>
