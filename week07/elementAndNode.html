@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Element 和 Node 的区别</title>
+    </head>
+    <body>
+        <p>浏览器的 API</p>
+        节点API 
+        DOM 有 DOM树的概念，所有 DOM树 都继承于 Node 
+        
+        Node 分 Element 节点，是元素型节点，跟标签相对应，有开始标签和结束标签；
+        Document：文档根节点；
+        CharacterData字符数据；
+
+
+        导航类操作
+        节点的导航和元素的导航
+        parentNode 找到父节点；
+        childNodes 找到子节点；
+        firstChild 找到第一个子节点；
+        lastChild  找到最后一个节点；
+        nextSibling 找到下一个节点；
+        previousSibling 找到上一个节点；
+
+
+        Element的导航操作
+        parentElement 找到父元素；
+        children      找到子元素；
+        firstElementChild 找到第一个子元素；
+        lastElementChild 找到第一个子元素；
+        nextElementSibling 找到下一个元素；
+        previousElementSibling 找到上一个元素；
+
+
+
+        修改操作：
+        appendChild 最后添加节点；
+        insertBefore 插入第一个节点；
+        removeChild 移除一个元素，想移动元素，需要先找到父元素才能移除；
+        replaceChild 远的元素，想当于 remove 元素，并 insert 元素；
+
+        高级操作：
+        compareDocumentPosition 用于比较两个节点的关系函数；
+        contains 检查一个节点是否包含另一个节点；
+        isEquaInode 检查两个节点是否完全相同；
+        isSameNode 检查两个节点是否在同一个节点，可以在 JavaScript 中 === 来处理；
+        cloneNode 复制一个节点，如果传入参数为 true ，则会连子元素做深拷贝；
+
+
+
+        Node 90%的节点都属性 element 
+        DocumentType：文档类型
+
+        <div id="header">
+            <li>第一行内容</li>
+            <li>第二行内容</li>
+            <li>第三行内容</li>
+        </div>
+
+        <script>
+
+            let _header = document.getElementById("header");
+            console.log(document.childNodes[1].childNodes[2].childNodes[2].nodeType);
+            
+
+            /**
+             * 
+             * ELEMENT_NODE = 1 = 是元素节点；
+             * TEXT_NODE = 3 = Element 或者 Attr 中实际的  文字
+             * 
+            */
+
+
+            // Node.ELEMENT_NODE	1	一个 元素 节点，例如 <p> 和 <div>。
+            // Node.TEXT_NODE	3	Element 或者 Attr 中实际的  文字
+            // Node.CDATA_SECTION_NODE	4	一个 CDATASection，例如 <!CDATA[[ … ]]>。
+            // Node.PROCESSING_INSTRUCTION_NODE	7	一个用于XML文档的 ProcessingInstruction ，例如 <?xml-stylesheet ... ?> 声明。
+            // Node.COMMENT_NODE	8	一个 Comment 节点。
+            // Node.DOCUMENT_NODE	9	一个 Document 节点。
+            // Node.DOCUMENT_TYPE_NODE	10	描述文档类型的 DocumentType 节点。例如 <!DOCTYPE html>  就是用于 HTML5 的。
+            // Node.DOCUMENT_FRAGMENT_NODE	11	一个 DocumentFragment 节点
+            
+        </script>
+
+    </body>
+</html>
