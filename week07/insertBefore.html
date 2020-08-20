@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+        
+        <div id="main">
+            <li>这是第一行元素</li>
+            <li>这是最后一行元素</li>
+        </div>
+        <script>
+
+            let _span = document.createElement('span');
+            let _text = document.createTextNode('这是一个 Span 标签');
+            _span.appendChild(_text);
+
+            let main = document.getElementById('main');
+            main.insertBefore(_span,main.children[1]);
+            // _parent.insertBefore(_span,null);
+            // _parent.insertBefore(_span,_parent.childNodes[0]);
+            //熟悉了节点和元素，_parent.children 是没有文本元素的。childNodes 是有文本节点的。
+        </script>
+    </body>
+</html>

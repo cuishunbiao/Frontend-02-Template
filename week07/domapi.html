@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div>这是一行 Div 标签</div>
+            <span>这是一行 Span 标签</span>
+            <p>这是一行 P 元素</p>
+            <strong>这是一行 Strong 标签</strong>
+        </div>
+
+        <script>
+            //方法三
+
+            
+
+            //方法一 
+            // let container = document.getElementById('container');
+            // let arr = Array.prototype.slice.call(container.children)
+            // for(let dom of arr ){
+            //     container.removeChild(dom);
+            //     console.log('执行删除')
+            // }
+            // console.log(arr)
+            // arr.reverse();
+            // console.log(arr)
+            
+            // for(let dom of arr){
+            //     container.appendChild(dom);
+            //     console.log('执行添加')
+
+            // }
+
+            //方法二
+            // let container = document.getElementById('container');
+            // console.log(container)
+            // console.log('------------------------')
+            // let len = container.children.length;
+            // while(len-- > 0){
+            //     console.log(len)
+            //     console.log(container.children[len])
+            //     console.log(container);
+            //     //container.appendChild(container.children[len])
+            // }
+
+            
+        </script>
+    </body>
+</html>

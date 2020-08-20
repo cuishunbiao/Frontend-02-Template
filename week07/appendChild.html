@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+</head>
+
+<body>
+    <div id="main"></div>
+    <script>
+        // appendChild 是添加节点，将节点添加到指定父节点的子节点列表的末尾。如果获取的节点是当前文档中现有节点的引用，那 appendChild 则将其从当前位置移动到新的位置。
+        // 也就是说 appendChild 不止是添加节点，还有移动节点的功能。
+        //一般用法：
+        let createDiv = document.createElement('div');
+        createDiv.innerHTML = '这是添加的 div';
+        let main = document.getElementById('main');
+        main.appendChild(createDiv);
+        //输出结果为：
+        //<div id="main"><div>这是添加的 div</div></div>
+        //这是添加当前文档中不存在的节点，如果当前文档存在此节点，那就需要移除并添加了。
+
+        let outsideDiv = document.getElementById('outsideDiv');
+        let main = document.getElementById('main');
+        main.appendChild(outsideDiv);
+        //最终结果为：
+        // <div id="main">
+        //     <p>内层p标签</p>
+        //     <div id="outsideDiv">这是添加的外层 div</div>
+        // </div>
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+        <div id="main">内容</div>
+        <script>
+            //已知父元素的情况下，删除子元素
+            let mainDiv = document.getElementById('main');
+            let mainDivContainer = document.getElementById('main-container');
+            mainDiv.removeChild(mainDivContainer);
+
+            //不知道其父元素的时候，想要删除元素，需要先获取它的父元素节点，然后才能删除
+            let mainDiv = document.getElementById('main');
+            if( mainDiv.parentNode ){
+                mainDiv.parentNode.removeChild(mainDiv);
+            }
+        </script>
+    </body>
+</html>
