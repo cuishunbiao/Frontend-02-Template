@@ -18,28 +18,34 @@
         </div>
 
         <script>
-            //方法三
+            //方法三 Range
+            let container = document.getElementById('container');
+            let range = new Range();
+            range.setStart(container,0);
+            range.setEnd(container,3);
+            console.log(range);
+            // let _ran = document.getSelection().getRangeAt(0);
+            // console.log(_ran);
+            let fragment = range.extractContents();
+            range.insertNode(document.createTextNode("this is a Range."));
 
-            
 
-            //方法一 
+            //方法一
+
             // let container = document.getElementById('container');
             // let arr = Array.prototype.slice.call(container.children)
             // for(let dom of arr ){
             //     container.removeChild(dom);
             //     console.log('执行删除')
             // }
-            // console.log(arr)
             // arr.reverse();
-            // console.log(arr)
-            
             // for(let dom of arr){
             //     container.appendChild(dom);
             //     console.log('执行添加')
-
             // }
 
             //方法二
+
             // let container = document.getElementById('container');
             // console.log(container)
             // console.log('------------------------')
