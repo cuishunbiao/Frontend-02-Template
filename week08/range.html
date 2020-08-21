@@ -4,15 +4,55 @@
         <title></title>
     </head>
     <body>
+        <div id="container">
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+        </div>
+<p id="address">Wyatt Earp<br>
+101 E. Main St.<br>
+Dodge City, KS<br>
+67801<br>
+USA</p>
 
-
+<hr>
+<p>Nodes in the original address:</p>
+<ol id="log"></ol>
         <script>
             /**
              * 不在乎层级，并且可以包含半个节点（会自动补充完整节点）。
              * 
              * 
              */
+            // let container = document.getElementById('container');
+            // let range = new Range();
+            // range.setStart(container,0);
+            // range.setStart(container,2);
+            // console.log(container.childNodes)
+            // console.log(container.childNodes[container.childNodes.length - 1])
+            // console.log(range.extractContents())
 
+
+            const address = document.getElementById('address');
+const log = document.getElementById('log');
+
+debugger
+// Log info
+address.childNodes.forEach(node => {
+  const li = document.createElement('li');
+  li.textContent = `${node.nodeName}, ${node.nodeValue}`;
+  log.appendChild(li);
+});
+
+// Highlight the street and city
+const startOffset = 2;  // Start at third node: 101 E. Main St.
+const endOffset = 5;    // End at fifth node: Dodge City, KS
+const range = document.createRange();
+range.setStart(address, startOffset);
+range.setEnd(address, endOffset);
+
+const mark = document.createElement('mark');
+range.surroundContents(mark);
 
         </script>
     </body>
