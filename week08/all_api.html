@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+        
+
+        <script>
+
+
+            let names = Object.getOwnPropertyNames(Number);//获取所有属性
+
+
+            function filtertOut(names,props){
+                let set = new Set();
+                props.forEach(o => set.add(o));
+                return names.filter(e => !set.has(e));
+            }
+
+            filtertOut(names,['length2'])
+            console.log(names);
+
+
+        </script>
+    </body>
+</html>
