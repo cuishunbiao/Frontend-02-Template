@@ -19,6 +19,7 @@
                 border: #999 1px solid;
                 box-sizing: border-box;
                 line-height: 100px;
+                height: 100px;
                 text-align: center;
                 font-size: 40px;
             }
@@ -26,29 +27,130 @@
     </head>
     <body>
         <div id="container" class="container"></div>
+        <div id="win"></div>
         <script>
+            let color = 1;
             let pattern = [
-                [1, 0, 0],
-                [0, 2, 0],
-                [0, 0, 1],
+                [0, 0, 0],
+                [0, 0, 0],
+                [0, 0, 0],
             ];
             function show() {
                 let container = document.getElementById("container");
+                container.innerHTML = ''
                 for (let i = 0; i < 3; i++) {
                     for (let j = 0; j < 3; j++) {
                         let cell = document.createElement("div");
                         cell.classList.add("cell");
                         cell.innerText =
-                            pattern[i][j] === 1
-                                ? "⭕️"
-                                : pattern[i][j] === 2
-                                ? "❌"
-                                : "";
+                            pattern[i][j] === 1 ? "⭕️" : 
+                            pattern[i][j] === 2 ? "❌" : "";
+                        cell.addEventListener('click',()=>clickFn(j,i))
                         container.appendChild(cell)
                     }
                 }
             }
             show();
+
+            /**
+             * x = 横
+             * y = 列
+             * 
+             * 
+            */
+            function clickFn(x,y){
+                if( pattern[y][x] ) return;//如果有值就退出
+                pattern[y][x] = color;//赋值
+                if( check(pattern,color) ){
+                    let win = document.getElementById('win');
+                    let winText = color === 2 ? 'X win' : color === 1 ? 'O win' : ''
+                    win.innerHTML = winText;
+                }
+                color = 3 - color;// 3-1=2  3-2=1
+                show();
+                if( willWinFn(pattern,color) ){
+                    let win = document.getElementById('win');
+                    let winText = color === 2 ? 'X 要赢了...' : color === 1 ? 'O 要赢了...' : ''
+                    win.innerHTML = winText;
+                }
+            }
+
+            //克隆
+            function cloneFn(pattern){
+                return JSON.parse(JSON.stringify(pattern))
+            }
+
+            //判断是否有人即将胜出，循环所有空的位置，去匹配判断
+            function willWinFn(pattern,color){
+                for(let i=0;i<3;i++){
+                    for( let j=0;j<3;j++ ){
+                        if( pattern[i][j] ) continue;//如果有值，则退出。
+                        let tmp = cloneFn(pattern);
+                        tmp[i][j] = color;
+                        if( check(tmp, color) ){
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            //判断是否有人胜出
+            function check(pattern,color){
+
+                //循环遍历每行的元素，如果有元素内容不是当前最后选中的值，则为 false;
+                for( let i=0;i< 3;i++ ){
+                    let win = true;
+                    for( let j=0;j<3;j++){
+                        if( pattern[i][j] !== color ){
+                            win = false;
+                        }
+                    }
+                    if( win ){
+                        return true;
+                    }
+                }
+
+                //循环遍历每一列的值，如果有元素不是当前列里的值，则为 false
+                for(let i=0;i<3;i++){
+                    let win = true;
+                    for(let j=0;j<3;j++){
+                        if( pattern[j][i] !== color ){
+                            win = false;
+                        }
+                    }
+                    if( win ){
+                        return true;
+                    }
+                }
+
+                //右上角到左下角，判断斜的方向，是否有一样的值，横纵坐标都相等
+                {
+                    let win = true;
+                    for( let i=0;i<3;i++ ){
+                        if( pattern[i][i] !== color ){
+                            win = false;
+                        }
+                    }
+                    if( win ){
+                        return true;
+                    }
+                }
+
+                //判断左上角到右下角
+                {
+                    let win = true;
+                    for( let i=0;i<3;i++){
+                        if( pattern[i][2-i] !== color ){
+                            win = false;
+                        }
+                    }
+                    if(win){
+                        return true
+                    }
+                }
+                return false;
+            }
 
         </script>
     </body>
