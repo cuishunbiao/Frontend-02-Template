@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+            }
+            .container{
+                width: 300px;
+                display: flex;
+                flex-wrap:wrap;
+                border: #999 1px solid;
+            }
+            .container .cell{
+                flex: 0 0 100px;
+                background-color: sandybrown;
+                border: #999 1px solid;
+                box-sizing: border-box;
+                line-height: 100px;
+                text-align: center;
+                font-size: 40px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container" class="container"></div>
+        <script>
+            let pattern = [
+                [1, 0, 0],
+                [0, 2, 0],
+                [0, 0, 1],
+            ];
+            function show() {
+                let container = document.getElementById("container");
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        let cell = document.createElement("div");
+                        cell.classList.add("cell");
+                        cell.innerText =
+                            pattern[i][j] === 1
+                                ? "⭕️"
+                                : pattern[i][j] === 2
+                                ? "❌"
+                                : "";
+                        container.appendChild(cell)
+                    }
+                }
+            }
+            show();
+
+        </script>
+    </body>
+</html>
