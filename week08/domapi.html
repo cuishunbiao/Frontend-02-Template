@@ -1,63 +1,62 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title></title>
-        <style>
-            *{
-                margin: 0;
-                padding: 0;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="container">
-            <div>这是一行 Div 标签</div>
-            <span>这是一行 Span 标签</span>
-            <p>这是一行 P 元素</p>
-            <strong>这是一行 Strong 标签</strong>
-        </div>
 
-        <script>
-            //方法三 Range
-            let container = document.getElementById('container');
-            let range = new Range();
-            range.setStart(container,0);
-            range.setEnd(container,3);
-            console.log(range);
-            // let _ran = document.getSelection().getRangeAt(0);
-            // console.log(_ran);
-            let fragment = range.extractContents();
-            range.insertNode(document.createTextNode("this is a Range."));
+<head>
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        这是一行需要被反转的标签1<br>
+        这是一行需要被反转的标签2<br>
+        这是一行需要被反转的标签3<br>
+        这是一行需要被反转的标签4<br>
+        这是一行需要被反转的标签5
+    </div>
+
+    <div id="content"></div>
+    <script>
+        //方法三 Range
+
+        let container = document.getElementById('container');
+        let content = document.getElementById('content');
+        let range = new Range();
+        range.setStart(container, 0);
+        range.setEnd(container, container.childNodes.length);
+        let frament = range.extractContents();
+        console.log(frament);
+        let len = frament.childNodes.length;
+        while (len-- > 0) {
+            content.appendChild(frament.childNodes[len]);
+        }
 
 
-            //方法一
+        //方法一
+        // let container = document.getElementById('container');
+        // let arr = Array.prototype.slice.call(container.childNodes)
+        // for(let dom of arr ){
+        //     container.removeChild(dom);
+        // }
+        // arr.reverse();
+        // for(let dom of arr){
+        //     container.appendChild(dom);
+        // }
 
-            // let container = document.getElementById('container');
-            // let arr = Array.prototype.slice.call(container.children)
-            // for(let dom of arr ){
-            //     container.removeChild(dom);
-            //     console.log('执行删除')
-            // }
-            // arr.reverse();
-            // for(let dom of arr){
-            //     container.appendChild(dom);
-            //     console.log('执行添加')
-            // }
+        //方法二
 
-            //方法二
+        // let container = document.getElementById('container');
+        // let len = container.childNodes.length;
+        // while(len-- > 0){
+        //     container.appendChild(container.childNodes[len])
+        // }
 
-            // let container = document.getElementById('container');
-            // console.log(container)
-            // console.log('------------------------')
-            // let len = container.children.length;
-            // while(len-- > 0){
-            //     console.log(len)
-            //     console.log(container.children[len])
-            //     console.log(container);
-            //     //container.appendChild(container.children[len])
-            // }
+    </script>
+</body>
 
-            
-        </script>
-    </body>
 </html>

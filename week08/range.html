@@ -4,55 +4,81 @@
         <title></title>
     </head>
     <body>
+        <div id="reverse">
+            这是一行需要被反转的标签1<br>
+            这是一行需要被反转的标签2<br>
+            这是一行需要被反转的标签3<br>
+            这是一行需要被反转的标签4<br>
+            这是一行需要被反转的标签5
+        </div>
         <div id="container">
             <li>1</li>
             <li>2</li>
             <li>3</li>
         </div>
-<p id="address">Wyatt Earp<br>
-101 E. Main St.<br>
-Dodge City, KS<br>
-67801<br>
-USA</p>
-
-<hr>
-<p>Nodes in the original address:</p>
-<ol id="log"></ol>
         <script>
             /**
              * 不在乎层级，并且可以包含半个节点（会自动补充完整节点）。
-             * 
-             * 
+             * Range 方法可以在写时间插件的时候使用，每次时间选择插件的翻页和选择月份都会重新渲染当前月份日期。
              */
-            // let container = document.getElementById('container');
+            // let reverse = document.getElementById('reverse');
+            // debugger
             // let range = new Range();
+            // range.setStart(reverse,0);//设置开始节点
+            // range.setEnd(reverse,reverse.childNodes.length);//设置结束节点
+            // let frament = range.extractContents();//把 Range 添加到 DocumentFragment 
+            // let len = frament.childNodes.length;
+            // while(len-- > 0){
+            //     frament.appendChild(frament.childNodes[len])
+            // }
+            // reverse.appendChild(frament);
+
+
+            // let container = document.getElementById('reverse');
+            
+            // let selection = window.getSelection();
+            // selection.removeAllRanges();
+
+            // const range = document.createRange();
+            // range.selectNodeContents(container);
+            // selection.addRange(range);
+            
+            // let range = new Range();
+            // range.selectNodeContents(container);
+            // let fragment = range.extractContents();
+            // console.log(fragment)
+
+
+
             // range.setStart(container,0);
-            // range.setStart(container,2);
+            // range.setEnd(container,container.childNodes.length - 1);
             // console.log(container.childNodes)
             // console.log(container.childNodes[container.childNodes.length - 1])
             // console.log(range.extractContents())
 
 
-            const address = document.getElementById('address');
-const log = document.getElementById('log');
 
-debugger
-// Log info
-address.childNodes.forEach(node => {
-  const li = document.createElement('li');
-  li.textContent = `${node.nodeName}, ${node.nodeValue}`;
-  log.appendChild(li);
-});
 
-// Highlight the street and city
-const startOffset = 2;  // Start at third node: 101 E. Main St.
-const endOffset = 5;    // End at fifth node: Dodge City, KS
-const range = document.createRange();
-range.setStart(address, startOffset);
-range.setEnd(address, endOffset);
+//             const address = document.getElementById('address');
+            // const log = document.getElementById('log');
 
-const mark = document.createElement('mark');
-range.surroundContents(mark);
+            // debugger
+            // // Log info
+            // address.childNodes.forEach(node => {
+            //   const li = document.createElement('li');
+            //   li.textContent = `${node.nodeName}, ${node.nodeValue}`;
+            //   log.appendChild(li);
+            // });
+
+            // // Highlight the street and city
+            // const startOffset = 2;  // Start at third node: 101 E. Main St.
+            // const endOffset = 5;    // End at fifth node: Dodge City, KS
+            // const range = document.createRange();
+            // range.setStart(address, startOffset);
+            // range.setEnd(address, endOffset);
+
+            // const mark = document.createElement('mark');
+            // range.surroundContents(mark);
 
         </script>
     </body>
