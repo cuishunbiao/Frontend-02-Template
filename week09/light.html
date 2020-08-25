@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <style>
+            #light {
+                width: 50px;
+                height: 50px;
+                line-height: 50px;
+                border-radius: 50%;
+            }
+            .red {
+                background-color: red;
+            }
+            .green {
+                background-color: green;
+            }
+            .yellow {
+                background-color: yellow;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="light"></div>
+        <script>
+            let light = document.getElementById("light");
+
+            function redLightFn() {
+                light.className = "red";
+                return new Promise((res) => {
+                    setTimeout(() => {
+                        res();
+                    }, 2000);
+                });
+            }
+
+            function greenLightFn() {
+                light.className = "green";
+                return new Promise((res) => {
+                    setTimeout(() => {
+                        res();
+                    }, 3000);
+                });
+            }
+
+            function yellowLightFn() {
+                light.className = "yellow";
+                return new Promise((res) => {
+                    setTimeout(() => {
+                        res();
+                    }, 1000);
+                });
+            }
+
+            async function start() {
+                await greenLightFn();
+                await yellowLightFn();
+                await redLightFn();
+                start();
+            }
+
+            start();
+        </script>
+    </body>
+</html>
