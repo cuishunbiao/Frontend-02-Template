@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>地图编辑器</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                width: 626px;
+                height: 400px;
+            }
+            .container .cell {
+                width: 4px;
+                height: 4px;
+                background-color: #ddd;
+                border-right: solid 1px #fff;
+                border-bottom: solid 1px #fff;
+                float: left;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container" class="container"></div>
+        <script>
+            let container = document.getElementById("container");
+
+            for (let i = 0; i < 100; i++) {
+                for (let j = 0; j < 100; j++) {
+                    let cell = document.createElement("div");
+                    cell.className = "cell";
+
+                    cell.addEventListener("mousemove", (e) => {
+                        console.log(e);
+                    });
+
+                    container.appendChild(cell);
+                }
+            }
+
+            container.addEventListener("click", () => {
+                mouseMoveFn();
+            });
+        </script>
+    </body>
+</html>
