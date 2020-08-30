@@ -29,29 +29,28 @@
         <button onclick="saveFn()">保存</button>
         <button onclick="clearFn()">清除线条</button>
         <script>
-            class Sorted{
-                constructor(data,compare){
-                    this.data = data.slice();//复制数组，不会改变原数组
-                    this.compare = compare || ((a,b)=>a-b)
+            class Sorted {
+                constructor(data, compare) {
+                    this.data = data.slice(); //复制数组，不会改变原数组
+                    this.compare = compare || ((a, b) => a - b);
                 }
-                take(){
-                    if( !this.data.length ) return;//没数据返回 undefined
+                take() {
+                    if (!this.data.length) return; //没数据返回 undefined
                     let min = this.data[0];
                     let minIndex = 0;
 
                     //寻找最小的数
-                    for(let i=1;i<this.data.length;i++){
-                        if( this.compare(this.data[i],min) < 0 ){
+                    for (let i = 1; i < this.data.length; i++) {
+                        if (this.compare(this.data[i], min) < 0) {
                             min = this.data[i];
                             minIndex = i;
                         }
                     }
-                    this.data[minIndex] = this.data[this.data.length - 1];//把最后一个复制到当前 index 位置 o(1)操作
+                    this.data[minIndex] = this.data[this.data.length - 1]; //把最后一个复制到当前 index 位置 o(1)操作
                     this.data.pop();
                     return min;
-
                 }
-                give(v){
+                give(v) {
                     this.data.push(v);
                 }
             }
@@ -117,10 +116,10 @@
             }
 
             //睡眠时间
-            function sleep(timer){
-                return new Promise(resolve=>{
-                    setTimeout(resolve,timer)
-                })
+            function sleep(timer) {
+                return new Promise((resolve) => {
+                    setTimeout(resolve, timer);
+                });
             }
 
             /**
@@ -134,32 +133,61 @@
              * start 开始坐标点 x,y
              * end 结束坐标点 x,y
              */
-            async function path(map, start, end) {
-                let queue = [start];
+            async function findPath(map, start, end) {
+                let table = Object.create(map);
+                let queue = new Sorted(
+                    [start],
+                    (a, b) => distance(a) - distance(b)
+                );
 
-                async function insert(x, y) {
-                    //如果坐标是不正常坐标，全都 Return 
-                    if( x < 0 || x >=100 || y < 0 || y >= 100) return;
-                    //如果这个坐标点有值就 return 
-                    if( map[y*100 + x] ) return;
-                    //map[x*100 + y]
-                    await sleep(30)
-                    container.children[y*100 + x].style.backgroundColor = 'green';
-                    map[y*100 + x] = 2;//标记为「可走的路」 1=不可走的路
-                    queue.push([x,y])
+                //距离
+                function distance(point) {
+                    return (point[0] - end[0]) ** 2 + (point[1] - end[1]) ** 2;
                 }
 
-                while (queue.length) {
-                    let [x, y] = queue.shift();
-                    console.log(x, y);
+                async function insert(x, y, pre) {
+                    //如果坐标是不正常坐标，全都 Return
+                    if (x < 0 || x >= 100 || y < 0 || y >= 100) return;
+                    //如果这个坐标点有值就 return
+                    if (table[y * 100 + x]) return;
+                    //table[x*100 + y]
+                    await sleep(10);
+                    container.children[y * 100 + x].style.backgroundColor =
+                        "green";
+                    table[y * 100 + x] = pre; //标记为「可走的路」 1=不可走的路
+                    queue.give([x, y]);
+                }
+
+                while (queue.data.length) {
+                    let [x, y] = queue.take();
                     //如果当前队列里的 x,y 坐标和 end[x,y] 的坐标一致
                     if (x === end[0] && y === end[1]) {
-                        return true;
+                        let path = [];
+                        /**
+                         * 获取到最后 x 和 y 的值
+                         * 然后把 map里面对应的数值添加到 path 里。
+                         * 在 Table 里，有对应好的 坐标点。
+                         * 根据 path 里的下标值去获取 table 里的坐标点
+                         * 
+                        */
+                        while (x != start[0] || y != start[1]) {
+                            path.push(map[y * 100 + x]);
+                            [x, y] = table[y * 100 + x];
+                            container.children[
+                                y * 100 + x
+                            ].style.backgroundColor = "red";
+                        }
+                        return path;
                     }
-                    await insert(x - 1, y);
-                    await insert(x, y - 1);
-                    await insert(x + 1, y);
-                    await insert(x, y + 1);
+                    await insert(x - 1, y, [x, y]);
+                    await insert(x, y - 1, [x, y]);
+                    await insert(x + 1, y, [x, y]);
+                    await insert(x, y + 1, [x, y]);
+
+                    await insert(x - 1, y - 1, [x, y]);
+                    await insert(x + 1, y - 1, [x, y]);
+                    await insert(x + 1, y + 1, [x, y]);
+                    await insert(x - 1, y + 1, [x, y]);
                 }
             }
         </script>
