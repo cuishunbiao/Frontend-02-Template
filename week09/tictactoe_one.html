@@ -39,11 +39,8 @@
                         let cell = document.createElement("div");
                         cell.classList.add("cell");
                         cell.innerText =
-                            pattern[i * 3 + j] === 1
-                                ? "⭕️"
-                                : pattern[i * 3 + j] === 2
-                                ? "❌"
-                                : "";
+                            pattern[i * 3 + j] === 1 ? "⭕️" : 
+                            pattern[i * 3 + j] === 2 ? "❌" : "";
                         cell.addEventListener("click", () => clickFn(i*3+j));
                         container.appendChild(cell);
                     }
@@ -58,8 +55,7 @@
              *
              */
             function clickFn(x) {
-                debugger
-                if (pattern[x]) return; //如果有值就退出
+                //if (pattern[x]) return; //如果有值就退出
                 pattern[x] = color; //赋值
                 if (check(pattern, color)) {
                     let win = document.getElementById("win");
@@ -69,6 +65,11 @@
                 }
                 color = 3 - color; // 3-1=2  3-2=1
                 show();
+                //电脑操作
+                computerMoveFn()
+                //最好的选择
+                //console.log(bestChoiceFn(pattern,color))
+            
                 if (willWinFn(pattern, color)) {
                     let win = document.getElementById("win");
                     let winText =
@@ -79,17 +80,15 @@
                             : "";
                     win.innerHTML = winText;
                 }
-                //电脑操作
-                computerMoveFn()
-                //最好的选择
-                //console.log(bestChoiceFn(pattern,color))
+            
             }
 
             function computerMoveFn(){
                 let choice = bestChoiceFn(pattern,color);
-                if( choice.point ){
-                    pattern[choice.point[1] * 3 + choice.point[0]] = color
+                if( choice.point >= 0){
+                    pattern[choice.point] = color
                 }
+                console.log(pattern);
                 if( check(pattern,color) ){
                     let winText =
                         color === 2
@@ -116,7 +115,7 @@
                         let tmp = cloneFn(pattern);
                         tmp[i * 3 + j] = color;
                         if (check(tmp, color)) {
-                            return (i * 3 + j);
+                            return i * 3 + j;
                         }
                     }
                 }

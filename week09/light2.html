@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <style>
+            .light {
+                width: 50px;
+                height: 50px;
+                line-height: 50px;
+                border-radius: 50%;
+                background-color: grey;
+                display: inline-block;
+            }
+            .light.red {
+                background-color: red;
+            }
+            .light.green {
+                background-color: green;
+            }
+            .light.yellow {
+                background-color: yellow;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="green" class="light"></div>
+        <div id="yellow" class="light"></div>
+        <div id="red" class="light"></div>
+        <script>
+            let redDom = document.getElementById("red");
+            let greenDom = document.getElementById("green");
+            let yellowDom = document.getElementById("yellow");
+            
+            //清除所有颜色 
+            function clearLightColorFn(){
+                let light = document.getElementsByClassName('light');
+                for(let i in light){
+                    light[i].className = 'light';
+                }
+            }
+
+            function redLightFn(){
+                clearLightColorFn();
+                redDom.classList.add('red');
+            }
+            function greenLightFn(){
+                clearLightColorFn();
+                greenDom.classList.add('green');
+            }
+            function yellowLightFn(){
+                clearLightColorFn();
+                yellowDom.classList.add('yellow');
+            }
+
+            //睡眠时间
+            function sleepFn(timer){
+                return new Promise((resolve)=>{
+                    setTimeout(()=>{
+                        resolve();
+                    },timer)
+                })
+            }
+
+            async function startFn(){
+                greenLightFn();
+                await sleepFn(3000);
+                yellowLightFn();
+                await sleepFn(1000);
+                redLightFn();
+                await sleepFn(2000);
+                startFn();//重新开始
+            }
+
+            startFn()
+        </script>
+    </body>
+</html>
