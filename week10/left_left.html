@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>正则表达式</title>
+    </head>
+    <body>
+        <script>
+            //圆括号表达捕获
+            let regexp = /([0-9\.]+)|([ \t]+)|([\r\n]+)|(\*)|(\/)|(\+)|(\-)/g;
+            let dictionary = [
+                "Number",
+                "whitespace",
+                "LineTerminator",
+                "*",
+                "/",
+                "+",
+                "-",
+            ];
+
+            function* tokenNize(source) {
+                let result = null;
+                let jieguo = [];
+                while (true) {
+                    result = regexp.exec(source);
+                    if (!result) break;
+                    for (let i = 1; i <= dictionary.length; i++) {
+                        if (result[i]) {
+                            console.log(dictionary[i - 1]);
+                            jieguo.push({
+                                type:dictionary[i - 1],
+                                value:result[i]
+                            })
+                            yield jieguo;
+                        }
+                    }
+                    yield jieguo.push({
+                        type:'EOF'
+                    })
+                }
+            }
+
+            tokenNize("10 + 10 - 20 * 1");
+        </script>
+    </body>
+</html>
