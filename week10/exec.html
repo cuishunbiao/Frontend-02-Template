@@ -1,13 +1,50 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title></title>
-    </head>
-    <body>
-        
-        <script>
-            //匹配
-            let regexp = /([0-9\.]+)|([ \t]+)|([ \r\n]+)|(\*)|(\/)|(\+)|(\-)/g;
-        </script>
-    </body>
+
+<head>
+    <title></title>
+</head>
+
+<body>
+
+    <script>
+        //匹配
+        let regexp = /([0-9\.]+)|([ \t]+)|([ \r\n]+)|(\*)|(\/)|(\+)|(\-)/g;
+        let typeLists = ['Number', 'whiteSpace', 'ReturnNewLine', '*', '/', '+', '-'];
+        let string = '20 - 20 * 3';
+
+        function* genFn() {
+            let result = null;
+            let lastIndex = 0;
+            while (true) {
+                lastIndex = regexp.lastIndex;//上一个元素的匹配开始下标
+                result = regexp.exec(string);
+                if (!result) break;
+                //当前匹配元素的下标 减去 上一个元素的下标，应该大于 当前值的长度，说明「进度正确」
+                if (regexp.lastIndex - lastIndex > result[0].length) break;
+                let token = {
+                    type: null,
+                    value: null
+                }
+                for (let i = 1; i <= typeLists.length; i++) {
+                    if (result[i]) {
+                        token.type = typeLists[i - 1]
+                    }
+                }
+                token.value = result[0];
+                yield token;
+            }
+            yield {
+                type:'EOF'
+            }
+        }
+
+        for (let token of genFn()) {
+            console.log(token);
+        }
+
+
+    </script>
+</body>
+
 </html>
