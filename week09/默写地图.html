@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            .table {
+                width: 800px;
+                height: 630px;
+                font-size: 0;
+            }
+            .table .cell {
+                width: 6px;
+                height: 6px;
+                line-height: 4px;
+                background-color: #ccc;
+                display: inline-block;
+                border-bottom: solid 1px #ddd;
+                border-right: solid 1px #ddd;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="table" class="table"></div>
+        <button onclick="saveFn()">保存</button>
+        <script>
+            //默写一个
+            let mapData = localStorage['map'] ? JSON.parse(localStorage['map']) : Array(10000).fill(0);//默认填充0
+            let table = document.getElementById("table");
+            let mousedown = false; //默认不能滑动
+            for (let i = 0; i < 100; i++) {
+                for (let j = 0; j < 100; j++) {
+                    let cell = document.createElement("div");
+                    cell.classList.add("cell");
+                    table.appendChild(cell);
+                    if( mapData[100 * i + j] === 1 ){
+                        cell.style.backgroundColor = 'red';
+                    }
+                    cell.addEventListener("mousemove", () => {
+                        //滑动的动作 => 必须鼠标按下
+                        if (mousedown) {
+                            console.log("mousemove");
+                            table.children[100 * i + j].style.backgroundColor = "red";
+                            mapData[100 * i + j] = 1;//1 就是已经画过线了
+                        }
+                    });
+                }
+            }
+            table.addEventListener("mouseup", () => {
+                console.log("mouseUp");
+                mousedown = false;
+            });
+            table.addEventListener("mousedown", () => {
+                console.log("mousedown");
+                mousedown = true;
+            });
+
+            function saveFn(){
+                localStorage['map'] = JSON.stringify(mapData);
+            }
+        </script>
+    </body>
+</html>

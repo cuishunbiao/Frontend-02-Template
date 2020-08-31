@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>地图编辑器</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                width: 701px;
+                height: auto;
+                font-size: 0;
+            }
+            .container .cell {
+                width: 6px;
+                height: 6px;
+                line-height: 7px;
+                border-right: solid 1px #ddd;
+                border-bottom: solid 1px #ddd;
+                background-color: ddd;
+                display: inline-block;
+                vertical-align: top;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container" class="container"></div>
+        <button onclick="saveFn()">保存</button>
+        <button onclick="clearFn()">清除线条</button>
+        <script>
+            let container = document.getElementById("container");
+            let map = localStorage['map'] ? JSON.parse(localStorage['map']) : Array(10000).fill(0);
+
+            for (let i = 0; i < 100; i++) {
+                for (let j = 0; j < 100; j++) {
+                    let cell = document.createElement("div");
+                    cell.className = "cell";
+
+                    if( map[100*i + j] === 1 )
+                        cell.style.backgroundColor = 'black';
+
+                    cell.addEventListener("mousemove", () => {
+                        if( mousedown ){
+                            if(clear){
+                                cell.style.backgroundColor = "";
+                                map[100*i + j] = 0;// 0 变成可继续编辑的方块
+                            }else{
+                                cell.style.backgroundColor = 'black';
+                                map[100*i + j] = 1;// 1 变成不可继续编辑
+                            }
+                        }
+                    });
+                    container.appendChild(cell);
+                }
+            }
+
+            let mousedown = false;
+            let clear = false;
+            //鼠标按下
+            document.addEventListener('mousedown',e=>{
+                mousedown = true;
+                console.log(e.which)
+                //e.which 是否在按右键
+                clear = (e.which === 3)
+            })
+            //鼠标抬起
+            document.addEventListener('mouseup',()=>{
+                mousedown = false;
+            })
+            //document.addEventListener('contextmenu',e=> e.preventDefault())
+            
+            
+            // container.addEventListener("click", () => {
+            //     mouseMoveFn();
+            // });
+
+
+            function saveFn(){
+                localStorage['map'] = JSON.stringify(map)
+            }
+            function clearFn(){
+                let cells = document.getElementsByClassName('cell');
+                let _cells = Array.prototype.slice.call(cells);
+                _cells.forEach((item,index) => {
+                    item.style.backgroundColor = '';
+                    map[index] = 1;
+                });
+                localStorage['map'] = '';
+            }
+        </script>
+    </body>
+</html>
