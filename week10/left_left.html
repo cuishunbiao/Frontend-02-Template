@@ -6,40 +6,101 @@
     <body>
         <script>
             //圆括号表达捕获
-            let regexp = /([0-9\.]+)|([ \t]+)|([\r\n]+)|(\*)|(\/)|(\+)|(\-)/g;
+            let regexp = /([0-9\.]+)|([ \t]+)|([\r\n]+)|(\*)|(\/)|(\+)|(\-)|(\^)/g;
             let dictionary = [
                 "Number",
-                "whitespace",
+                "Whitespace",
                 "LineTerminator",
                 "*",
                 "/",
                 "+",
                 "-",
+                "^",
             ];
 
             function* tokenNize(source) {
                 let result = null;
-                let jieguo = [];
+                let lastIndex = 0;
                 while (true) {
+                    lastIndex = regexp.lastIndex;
                     result = regexp.exec(source);
+                    
                     if (!result) break;
+                    if( regexp.lastIndex - lastIndex > result[0].length ) break; 
+                    let token = {
+                        type:null,
+                        value:null
+                    }
                     for (let i = 1; i <= dictionary.length; i++) {
                         if (result[i]) {
-                            console.log(dictionary[i - 1]);
-                            jieguo.push({
-                                type:dictionary[i - 1],
-                                value:result[i]
-                            })
-                            yield jieguo;
+                            token.type = dictionary[i - 1]
                         }
                     }
-                    yield jieguo.push({
-                        type:'EOF'
-                    })
+                    token.value = result[0];
+                    yield token;
+                }
+                yield {
+                    type:'EOF'
                 }
             }
 
-            tokenNize("10 + 10 - 20 * 1");
+            let source = [];
+            for(let token of tokenNize("40 / 20 * 1")){
+                if( token.type === 'Whitespace' || token.type === 'LineTerminator' ) continue;
+                source.push(token);
+            }
+
+            function Expression(tokens){
+
+            }
+
+            function AdditiveExpression(source){
+
+            }
+
+            function MultiplicativeExpression(source){
+                //如果是 数字，说明是终结符
+                if( source[0].type === 'Number' ){
+                    let node = {
+                        type:'MultiplicativeExpression',
+                        children:[source[0]]
+                    }
+                    source[0] = node;
+                    return MultiplicativeExpression(source);
+                }
+                if( source[0].type === "MultiplicativeExpression" && source[1] && source[1].type === '*' ){
+                    let node = {
+                        type:'MultiplicativeExpression',
+                        operator:'*',
+                        children:[]
+                    }
+                    node.children.push(source.shift());
+                    node.children.push(source.shift());
+                    node.children.push(source.shift());
+                    source.unshift(node);
+                    return MultiplicativeExpression(source);
+                }
+                if( source[0].type === "MultiplicativeExpression" && source[1] && source[1].type === '/' ){
+                    let node = {
+                        type:'MultiplicativeExpression',
+                        operator:'/',
+                        children:[]
+                    }
+                    node.children.push(source.shift());
+                    node.children.push(source.shift());
+                    node.children.push(source.shift());
+                    source.unshift(node);
+                    return MultiplicativeExpression(source);
+                }
+                if( source[0].type === 'MultiplicativeExpression' ){
+                    return source[0]
+                }
+                return MultiplicativeExpression(source);
+            }
+
+            let multiplicativeExpresstion = MultiplicativeExpression(source);
+            console.log(multiplicativeExpresstion);
+            
         </script>
     </body>
 </html>
