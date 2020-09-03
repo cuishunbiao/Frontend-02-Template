@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body>
+        <script>
+            let arr = [1, 2, 3, 4, 5, 6];
+            function getherFn(arr) {
+                if( arr.length === 1 ) return;
+                let token = {
+                    value: 1,
+                    children: [],
+                };
+                if( arr[0].children ){
+                    token.children.push(arr.shift());
+                }
+                token.children.push(arr.pop());
+                arr.unshift(token);
+                getherFn(arr);
+            }
+            getherFn(arr)
+            console.log(arr);
+        </script>
+    </body>
+</html>
