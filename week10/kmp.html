@@ -1,0 +1,48 @@
+<script>
+    //字符串模式匹配
+    function kmp(source, pattern) {
+        //检查自符串有没有自重复
+        let table = new Array(pattern.length).fill(0);
+        {
+            //自重复串的开始位置，用 i 表示，如果是 0 就说明全部重复，最少第二个数开始重复
+            //已重复的用 j 表示
+            let i = 1;
+            j = 0;
+            while (i < pattern.length) {
+                console.log(pattern[i], pattern[j]);
+                if (pattern[i] === pattern[j]) {
+                    ++j, ++i;
+                    table[i] = j;
+                } else {
+                    if (j > 0) {
+                        j = table[j];
+                    } else {
+                        ++i;
+                    }
+                }
+                console.log(i, j);
+            }
+        }
+        console.log(table);
+        {
+            let i = 0;
+            j = 0;
+            while (i < source.length) {
+                if (pattern[j] === source[i]) {
+                    ++i, ++j;
+                } else {
+                    if (j > 0) {
+                        j = table[j];
+                    } else {
+                        ++i;
+                    }
+                }
+                if (j === pattern.length) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    kmp("aaadaacs", "aac"); //0000123
+</script>

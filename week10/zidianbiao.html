@@ -1,0 +1,61 @@
+<script>
+    let $ = Symbol('$');
+    class Tire {
+        constructor() {
+            this.node = Object.create(null);
+        }
+        insert(token) {
+            /**
+             * 生成的 token 的长度；
+             * 每次执行都去判断是否有当前的 key
+             * 如果有就直接赋值
+             * 如果没有就添加一个空的对象
+             * 这样来形成一个字典表
+             */
+            let node = this.node;
+            for (let i of token) {
+                //如果没有这个 key 值，就创建一个新的对象
+                if (!node[i]) {
+                    node[i] = Object.create(null);
+                }
+                node = node[i]; //如果当前有这个 key ，就直接赋值
+            }
+            // $ 是为了计算 most 方法里最大值
+            if (!($ in node)) {
+                node[$] = 0;
+            }
+            node[$]++;
+        }
+        most(){
+            let max = 0;//暂时记录 最大的数
+            let maxworld = null;//记录遍历的字符串
+            let visit = (node,world)=>{
+                if( node[$] && node[$] > max ){
+                    max = node[$];
+                    maxworld = world;
+                }
+                for( let p in node){
+                    visit(node[p], world + p);//递归，并把上次的 world 传到下一次计算中
+                }
+            }
+            visit(this.node,'');
+            console.log(max);
+            console.log(maxworld);
+        }
+    }
+
+    function createStringFn(length) {
+        let code = "";
+        for (let i = 0; i < length; i++) {
+            code += String.fromCharCode(Math.random() * 26 + "a".charCodeAt(0));
+        }
+        return code;
+    }
+
+    let newtire = new Tire();
+    for (let i = 0; i < 50000; i++) {
+        newtire.insert(createStringFn(4));
+    }
+
+    newtire.most();//计算出现次数最多的 world
+</script>
