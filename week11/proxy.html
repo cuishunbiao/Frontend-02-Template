@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body></body>
+    <script>
+        let object = {
+            name: "cuishunbiao",
+            age: 30,
+            sex: "男",
+        };
+
+        let po = reactive(object);
+
+        function reactive(object) {
+            return new Proxy(object, {
+                //获取值的时候执行
+                get(obj, prop, value) {
+                    return obj[prop];
+                },
+                //赋值的时候执行
+                set(obj, prop, value) {
+                    obj[prop] = value;
+                    console.log(obj, prop, value);
+                    return obj[prop];
+                },
+            });
+        }
+    </script>
+</html>
