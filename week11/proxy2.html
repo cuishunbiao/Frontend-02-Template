@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+    </head>
+    <body></body>
+    <script>
+        /**
+         * 获取一个函数它能访问到的所有变量
+         *
+         *
+         */
+        let callbacks = new Map();
+        let usedReavtivties = [];
+
+        let object = {
+            name: "cuishunbiao",
+            age: 30,
+            sex: "男",
+        };
+
+        let po = reactive(object);
+
+        function effect(callback) {
+            //usedReavtivties = [];//为什么要先清空？
+            //执行一下，如果用到了 响应式对象
+            //会去执行 Proxy.get
+            callback();
+            console.log(usedReavtivties);
+            //usedReavtivties 的输出结果为：
+            // [
+            //     [
+            //         {name:'cuishunbiao',age:30,sex:'男'},
+            //        'name'
+            //     ]
+            // ]
+            //防御多次注册
+            for (let reactivity of usedReavtivties) {
+                //第一层
+                if (!callbacks.has(reactivity[0])) {
+                    callbacks.set(reactivity[0],new Map());
+                    //callbacks.key = reactivity[0]
+                    //callbacks.value = Map(0)
+                }
+                //第二层
+                if(!callbacks.get(reactivity[0]).has(reactivity[1])){
+                    callbacks.get(reactivity[0]).set(reactivity[1],[])
+                }
+                callbacks.get(reactivity[0]).get(reactivity[1]).push(callback);
+            }
+            console.log('输出 callbacks');
+            console.log(callbacks);
+        }
+
+        effect(() => {
+            console.log(po.name);
+        });
+
+        //包装 Proxy
+        function reactive(object) {
+            return new Proxy(object, {
+                //设置属性的时候执行
+                set(obj, prop, value) {
+                    obj[prop] = value;
+                    if( callbacks.get(obj) ){
+                        if( callbacks.get(obj).get(prop) ){
+                            for(let call of callbacks.get(obj).get(prop)){
+                                call();
+                            }
+                        }
+                    }
+                    return obj[prop];
+                },
+                //获取属性的时候执行
+                get(obj, prop) {
+                    console.log("把对象和属性添加到 usedReactivties 里");
+                    usedReavtivties.push([obj, prop]);
+                    return obj[prop];
+                },
+            });
+        }
+    </script>
+</html>
