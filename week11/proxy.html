@@ -29,6 +29,7 @@
                 set(obj, prop, value) {
                     obj[prop] = value;
                     for (let call of callbacks) {
+                        console.log('循环执行 Call')
                         call(); //循环遍历 callbacks 里面的方法
                     }
                     return obj[prop];

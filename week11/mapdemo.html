@@ -1,0 +1,59 @@
+<script>
+    // let myMap = new Map();
+    // let keyObj = {
+    //     a:1
+    // };
+    // let keyFunc = function () {
+    //     console.log(1);
+    // };
+    // let keyString = 'a string';
+
+    // // 添加键
+    // myMap.set(keyString, "和键'a string'关联的值");
+    // myMap.set(keyObj, "和键keyObj关联的值");
+    // myMap.set(keyFunc, "和键keyFunc关联的值");
+
+    // myMap.size; // 3
+
+    // console.log(keyString);
+
+    // // 读取值
+    // console.log(myMap.keys());
+
+    // for (let a of myMap.keys()){
+    //     console.log(a);
+    // }
+    //console.log(myMap.get(keyFunc) === keyObj);    // "和键'a string'关联的值"
+    // myMap.get(keyObj);       // "和键keyObj关联的值"
+    // myMap.get(keyFunc);      // "和键keyFunc关联的值"
+
+    // myMap.get('a string');   // "和键'a string'关联的值"
+    // // 因为keyString === 'a string'
+    // myMap.get({});           // undefined, 因为keyObj !== {}
+    // myMap.get(function () { }); // undefined, 因为keyFunc !== function () {}
+
+    // let obj = {
+    //     a: 1,
+    //     b: 2,
+    // };
+    //    let obj2 = {
+    //     c: 1,
+    //     d: 2,
+    // };
+
+    // let _map = new Map();
+    // if (!_map.has(obj)) {
+    //     _map.set(obj,222);
+    // }
+    // if( !_map.get(obj).has(obj2) ){
+    //     _map.get(obj).set(obj2)
+    // }
+    //console.log(_map);
+
+    let a  = {'abc':'fdsfds'}
+    let b = ['a','2'];
+    let map = new Map();
+    map.set(a,a);
+    map.set(b,33,233);
+    console.log(map)
+</script>

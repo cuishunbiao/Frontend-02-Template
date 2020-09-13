@@ -1,0 +1,112 @@
+<input id="r" type="range" min="0" max="255" />
+<input id="g" type="range" min="0" max="255" />
+<input id="b" type="range" min="0" max="255" />
+<div style="width: 300px;height:300px;" id="divRGB"></div>
+<script>
+    let usedReactive = [];
+    let callbacks = new Map();
+    let reactiveCache = new Map();
+
+    let obj = {
+        r: 0,
+        g: 0,
+        b: 0,
+    };
+
+    function reactive(obj) {
+        //判断 reactiveCache 缓存是否有 obj ，如果有，直接返回
+        if (reactiveCache.has(obj)) {
+            return reactiveCache.get(obj);
+        }
+        //如果没有就递归监听
+        let proxy = new Proxy(obj, {
+            set(obj, prop, value) {
+                obj[prop] = value; //重新赋值
+                if (callbacks.get(obj)) {
+                    if (callbacks.get(obj).get(prop)) {
+                        for (let callback of callbacks.get(obj).get(prop)) {
+                            callback();
+                        }
+                    }
+                }
+                return obj[prop];
+            },
+            get(obj, prop, value) {
+                usedReactive.push([obj, prop]);
+                if (typeof obj[prop] === "object") {
+                    return reactive(obj[prop]); //递归执行 proxy
+                }
+                return obj[prop];
+            },
+        });
+        //把 proxy 传入缓存
+        reactiveCache.set(obj, proxy);
+
+        return proxy;
+    }
+    let proxyObj = reactive(obj);
+
+    function effect(callback) {
+        usedReactive = [];
+        callback();
+        for (let reactivity of usedReactive) {
+            if (!callbacks.has(reactivity[0])) {
+                callbacks.set(reactivity[0], new Map());
+            }
+            if (!callbacks.get(reactivity[0]).has(reactivity[1])) {
+                callbacks.get(reactivity[0]).set(reactivity[1], []);
+            }
+            callbacks.get(reactivity[0]).get(reactivity[1]).push(callback);
+        }
+    }
+
+    function bindFn(domId, obj) {
+        (function () {
+            let _domId = document.getElementById(domId);
+            effect(() => {
+                //我需要监听的需要提前 get 获取一下
+                _domId.value = obj[domId];
+            });
+            _domId.addEventListener("input", (event) => {
+                obj[domId] = event.target.value;
+            });
+        })(domId, obj);
+    }
+
+    bindFn("r", proxyObj);
+    bindFn("g", proxyObj);
+    bindFn("b", proxyObj);
+
+    //总的数据监听
+    effect(()=>{
+        document.getElementById('divRGB').style.backgroundColor = `rgb(${proxyObj.r},${proxyObj.g},${proxyObj.b})`
+    })
+
+
+    // effect(() => {
+    //     //我需要监听的需要提前 get 获取一下
+    //     //console.log(abc.obj3.obj31);
+    //     document.getElementById("r").value = proxyObj.r;
+    // });
+
+    // document.getElementById("r").addEventListener("input", (event) => {
+    //     proxyObj.r = event.target.value;
+    // });
+    // document.getElementById("g").addEventListener("input", (event) => {
+    //     proxyObj.g = event.target.value;
+    // });
+    // document.getElementById("b").addEventListener("input", (event) => {
+    //     proxyObj.b = event.target.value;
+    // });
+
+    // effect(() => {
+    //     //我需要监听的需要提前 get 获取一下
+    //     //console.log(abc.obj3.obj31);
+    //     document.getElementById('g').value = proxyObj.g;
+    // });
+    // effect(() => {
+    //     //我需要监听的需要提前 get 获取一下
+    //     //console.log(abc.obj3.obj31);
+    //     document.getElementById('b').value = proxyObj.b;
+    // });
+</script>
