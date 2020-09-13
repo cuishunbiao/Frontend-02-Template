@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>range</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            #range {
+                width: 100px;
+                height: 100px;
+                background-color: black;
+                display: inline-block;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="text">Map 对象保存键值对，并且能够记住键的原始插入顺序。任何值(对象或者原始值) 都可以作为一个键或一个值。全局属性 Infinity 是一个数值，表示无穷大。删除使用 EventTarget.addEventListener() 方法添加的事件。使用事件类型，事件侦听器函数本身，以及可能影响匹配过程的各种可选择的选项的组合来标识要删除的事件侦听器。一个Map对象在迭代时会根据对象中元素的插入顺序来进行 — 一个  for...of 循环在每次迭代后会返回一个形式为[key，value]的数组。</div>
+        <div id="range"></div>
+        <script>
+            let rangeDom = document.getElementById("range");
+            let baseX = 0,baseY = 0;
+            rangeDom.addEventListener("mousedown", event => {
+                let startX = event.clientX,startY = event.clientY;
+                //移动的动作
+                let moveAction = (event) => {
+                    let range = getNearest(event.clientX,event.clientY);
+                    range.insertNode(rangeDom);
+                    // console.log(event);
+                    // let _x = baseX + event.clientX - startX;
+                    // let _y = baseY + event.clientY - startY;
+                    // rangeDom.style.transform = `translate(${_x}px,${_y}px)`;
+                }
+                //鼠标抬起的动作
+                let upAction = (event) => {
+                    console.log("mouseup");
+                    baseX = baseX + event.clientX - startX;//重新更新 div 的位置
+                    baseY = baseY + event.clientY - startY;
+                    //清除 mousemove
+                    document.removeEventListener("mousemove", moveAction);
+                    document.removeEventListener("mouseup", upAction);
+                }
+                //事件监听
+                document.addEventListener("mousemove", moveAction);
+                document.addEventListener("mouseup", upAction);
+            });
+
+            //先获取所有 range ，拿到所有的位置例子
+            let ranges = [];
+            let text = document.getElementById('text');
+            for(let i=0;i<text.childNodes[0].textContent.length;i++){
+                let range = document.createRange();
+                range.setStart(text.childNodes[0],i);
+                range.setEnd(text.childNodes[0],i);
+                console.log(range.getBoundingClientRect())
+                ranges.push(range);
+            }
+
+            //找到 range 最近的 point
+            function getNearest(x,y){
+                let min = Infinity;
+                let nearest = null;
+                for( let range of ranges ){
+                    let rect = range.getBoundingClientRect();
+                    let distance = (rect.x - x) ** 2 + (rect.y - y) ** 2;
+                    console.log(distance);
+                    if( distance < min ){
+                        console.log('进来',distance)
+                        nearest = range;
+                        min = distance;
+                    }
+                }
+                return nearest;
+            }
+            document.addEventListener('selectstart',event=>event.preventDefault())
+        </script>
+    </body>
+</html>
