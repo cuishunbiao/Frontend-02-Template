@@ -1,48 +1,33 @@
-//webpack.config.js 里面 React.createElement 替换面本页面的 createElement 自己的方法
-function createElement(type, attributes, ...children) {
-    //创建一个标签 区分 Class 如果不是 string 类型，走 class 去添加
-    let element;
-    if( typeof type === 'string' ){
-        element = document.createElement(type);
-    }else{
-        element = new type;
-    }
-    //把所有属性添加到标签上
-    for(let attr in attributes){
-        element.setAttribute(attr,attributes[attr])
-    }
-    //把所有子元素添加到 Dom 里
-    for(let child of children){
-        if( typeof child === 'string' ){
-            child = document.createTextNode(child);
-        }
-        element.appendChild(child);
-    }
-    return element;
-}
+import { Component, createElement } from './framework'
 
-class Div{
-    constructor(){
-        this.root = document.createElement('div');
+class Carousel extends Component {
+    constructor() {
+        super()
+        this.attributes = Object.create(null);
     }
     setAttribute(name,value){
-        this.root.setAttribute(name,value)
+        this.attributes[name] = value;
     }
-    appendChild(children){
-        this.root.append(children)
+    render() {
+        this.root = document.createElement('div');
+        for (let record of this.attributes.src){
+            let child = document.createElement('img');
+            child.src = record;
+            this.root.appendChild(child);
+        }
+        return this.root;
     }
     mountTo(parent){
-        parent.appendChild(this.root);
+        parent.appendChild(this.render())
     }
 }
 
-let label = <Div id="a" class="abc" props="prop">
-                <span>a</span>
-                <span>b</span>
-                <span>c</span>
-                添加一行文字
-            </Div>
-//document.body.appendChild(label)
+let imagesLists = [
+    "./images/img1.jpg",
+    "./images/img2.jpg",
+    "./images/img3.jpg"
+]
 
+let label = <Carousel src={imagesLists} />
 //反向操作
 label.mountTo(document.body);
