@@ -17,31 +17,41 @@ class Carousel extends Component {
             child.style.backgroundImage = `url(${record})`;
             this.root.appendChild(child);
         }
+        
+        //添加鼠标事件
+        //如果使用 this.root 添加 mousemove 和 mouseup 事件，会导致鼠标移出 Demo 区事件停止，并且不能响应 up 事件
+        this.root.addEventListener('mousedown',res=>{
+            console.log('mousedown');
 
-        let currentIndex = 0;//当前张下标
-        setInterval(() => {
-            let children = this.root.children;
-            let nextIndex = (currentIndex+1) % children.length;//下一张的下标
-            let current = children[currentIndex];
-            let next = children[nextIndex];
+            let up = ()=>{
+                console.log('up')
+                document.removeEventListener('mousemove',move);
+                document.removeEventListener('mouseup',up);
+            }
+            let move = ()=>{
+                console.log('move')
+            }
+            document.addEventListener('mouseup', up)
+            document.addEventListener('mousemove', move)
+        })
 
-            next.style.transition = 'none';
-            next.style.transform = `translateX(${100 - nextIndex * 100}%)`;//下一张图 需向左移动 100% 
 
-            console.log('当前下标',currentIndex);
-            console.log('下一个下标',nextIndex);
-            console.log('下一个图片偏移',`-${100 - nextIndex * 100}%`)
-            setTimeout(() => {
-                next.style.transition = '';
-                current.style.transform = `translateX(${-100 - currentIndex * 100}%)`
-                next.style.transform = `translateX(-${nextIndex * 100}%)`;
-                currentIndex = nextIndex
+        // let currentIndex = 0;//当前张下标
+        // setInterval(() => {
+        //     let children = this.root.children;
+        //     let nextIndex = (currentIndex+1) % children.length;//下一张的下标
+        //     let current = children[currentIndex];
+        //     let next = children[nextIndex];
 
-                console.log('setTimeout 当前下标',currentIndex);
-                console.log('setTimeout 当前图片偏移',`${-100 - currentIndex * 100}%`)
-                console.log('setTimeout 下一个图片偏移',`-${nextIndex * 100}%`)
-            }, 20);
-        }, 3000);
+        //     next.style.transition = 'none';
+        //     next.style.transform = `translateX(${100 - nextIndex * 100}%)`;//下一张图 需向左移动 100% 
+        //     setTimeout(() => {
+        //         next.style.transition = '';
+        //         current.style.transform = `translateX(-${currentIndex * 100 + 100}%)`
+        //         next.style.transform = `translateX(-${nextIndex * 100}%)`;
+        //         currentIndex = nextIndex
+        //     }, 16);
+        // }, 3000);
 
         return this.root;
     }
