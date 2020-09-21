@@ -53,14 +53,13 @@ class Carousel extends Component {
 
                 //Math.round 只要超过 0.5 就取值为1；
                 //Math.sign 判断数据是否是正数还是负数，还是0；正数1，负数-1，0为0；
-                console.log(- Math.sign(Math.round(x / 400) - x + 200 * Math.sign(x)))
+                console.log(- Math.sign(Math.round(x / 400) - x + 200 * Math.sign(x)));
                 for (let offset of [0, - Math.sign(Math.round(x / 400) - x + 200 * Math.sign(x))]) {
                     let pos = position + offset;
                     pos = (pos + children.length) % children.length;
                     children[pos].style.transition = '';
                     children[pos].style.transform = `translateX(${- pos * 400 + offset * 400}px)`;
                 }
-
                 document.removeEventListener('mousemove', move);
                 document.removeEventListener('mouseup', up);
             }
