@@ -51,6 +51,8 @@ class Carousel extends Component {
                 position = position - Math.round(x / 400);//当前第几页  -1 + 1
                 console.log(position, '鼠标抬起时页码');
 
+                //Math.round 只要超过 0.5 就取值为1；
+                //Math.sign 判断数据是否是正数还是负数，还是0；正数1，负数-1，0为0；
                 for (let offset of [0, - Math.sign(Math.round(x / 400) - x + 200 * Math.sign(x))]) {
                     let pos = position + offset;
                     pos = (pos + children.length) % children.length;
