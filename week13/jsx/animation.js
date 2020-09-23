@@ -2,24 +2,33 @@
 const TICK = Symbol('tick');//永远不重复
 const TICK_HANDLER = Symbol('tick_handler');
 const ANIMATIONS = Symbol('animations')
+const START_TIME = Symbol('start-time');
 
 export class Timeline {
     constructor() {
         this[ANIMATIONS] = new Set();
+        this[START_TIME] = new Map();
     }
     start() {
         let startTime = Date.now();
         console.log('startTime ',startTime)
         this[TICK] = () => {
-            let currentSecond = Date.now() - startTime;//Date.now() 实时变化 
+            let now = Date.now();//Date.now() 实时变化 
             for(let animation of this[ANIMATIONS]){
+                //如果 animation 的时间比较小，我们就认为是 0；
+                let t;
+                if( this[START_TIME].get(animation) < startTime ){
+                    t = now - startTime;
+                }else{
+                    t = now - this[START_TIME].get(animation);
+                }
                 //计算出的时间大于持续时间，停止
-                if( currentSecond > animation.duration ){
+                if( t > animation.duration ){
                     this[ANIMATIONS].delete(animation);//删除方法
-                    currentSecond = animation.duration;
+                    t = animation.duration;
                     console.log(this[ANIMATIONS]);
                 }
-                animation.receive(currentSecond)
+                animation.receive(t)
             }
             requestAnimationFrame(this[TICK]);
         }
@@ -40,9 +49,14 @@ export class Timeline {
 
     }
     //把 animation 添加到 Timeline
-    add(animation){
+    //animation 有时候想手工设置 ... 
+    add(animation,startTime){
+        debugger
+        if( arguments.length < 2 ){
+            startTime = Date.now();
+        }
         this[ANIMATIONS].add(animation);
-        console.log(this[ANIMATIONS])
+        this[START_TIME].set(animation, startTime);
     }
 }
 
@@ -60,13 +74,14 @@ export class Animation {
      * @param {*} endValue 结束值
      * @param {*} duration 持续时长
      */
-    constructor(object, property, startValue, endValue, duration, timeFunction) {
+    constructor(object, property, startValue, endValue, duration, delay, timeFunction) {
         this.object = object;
         this.property = property;
         this.startValue = startValue;
         this.endValue = endValue;
         this.duration = duration;
         this.timeFunction = timeFunction;
+        this.delay = delay;
     }
     //执行
     receive(time) {
