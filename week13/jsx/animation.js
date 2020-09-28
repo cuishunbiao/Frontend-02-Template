@@ -1,3 +1,5 @@
+import { linear } from "./ease.js";
+
 //Timeline 的类，不能被外界随意调用
 const TICK = Symbol('tick');//永远不重复
 const TICK_HANDLER = Symbol('tick_handler');//tick事件
@@ -8,10 +10,13 @@ const PAUSE_TIME = Symbol('pause-time');
 
 export class Timeline {
     constructor() {
+        this.state = "Inited";
         this[ANIMATIONS] = new Set();
         this[START_TIME] = new Map();
     }
     start() {
+        if (this.state !== "Inited" ) return;
+        this.state = "started";
         let startTime = Date.now();
         this[PAUSE_TIME] = 0;//开始时为0
         console.log('startTime ',startTime)
@@ -21,9 +26,9 @@ export class Timeline {
                 //如果 animation 的时间比较小，我们就认为是 0；
                 let t;
                 if( this[START_TIME].get(animation) < startTime ){
-                    t = now - startTime - this[PAUSE_TIME];
+                    t = now - startTime - this[PAUSE_TIME] - animation.delay;
                 }else{
-                    t = now - this[START_TIME].get(animation) - this[PAUSE_TIME];
+                    t = now - this[START_TIME].get(animation) - this[PAUSE_TIME] - animation.delay;
                 }
                 //计算出的时间大于持续时间，停止
                 if( t > animation.duration ){
@@ -40,13 +45,14 @@ export class Timeline {
 
     //暂停
     pause() {
+        if (this.state !== 'started' ) return;
+        this.state = "pause";
         this[PAUSE_START] = Date.now();//开始暂停时间
         cancelAnimationFrame(this[TICK_HANDLER])
     }
     resume() {
-        if( !this[PAUSE_START] ){
-            return;
-        }
+        if (this.state !== 'pause') return;
+        this.state = "resume";
         this[PAUSE_TIME] += Date.now() - this[PAUSE_START];
         console.log(Date.now(),this[PAUSE_START])
         this[TICK]();
@@ -54,6 +60,14 @@ export class Timeline {
 
     //重启
     reset() {
+        this.pause();//先暂停
+        this.state = "Inited";
+        this.startTime = Date.now();
+        this[PAUSE_TIME] = 0;
+        this[ANIMATIONS] = new Set();
+        this[START_TIME] = new Map();
+        this[PAUSE_START] = 0;
+        this[TICK_HANDLER] = null;
 
     }
     //把 animation 添加到 Timeline
@@ -83,6 +97,8 @@ export class Animation {
      * @param {*} duration 持续时长
      */
     constructor(object, property, startValue, endValue, duration, delay, timeFunction, template) {
+        timeFunction = timeFunction || (v => v);
+        template = template || (v => v);
         this.object = object;
         this.property = property;
         this.startValue = startValue;
@@ -97,7 +113,8 @@ export class Animation {
         console.log(time)
         //变化区间  this.startValue + (this.endValue - this.startValue)
         let range = this.endValue - this.startValue;
-        this.object[this.property] = this.template(this.startValue + range * time / this.duration)
+        let progress = this.timeFunction(time / this.duration);
+        this.object[this.property] = this.template(this.startValue + range * progress)
     }
 }
 
