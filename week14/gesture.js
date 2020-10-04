@@ -109,6 +109,12 @@ element.addEventListener('touchcancel', event => {
 let start = (point, context) => {
     //console.log('start', point.clientX, point.clientY);
     context.startX = point.clientX, context.startY = point.clientY;
+    //初始化一个数组
+    context.points = [{
+        t: Date.now(),
+        x: point.clientX,
+        y: point.clientY
+    }]
 
     //恢复默认值
     context.isTap = true;
@@ -134,6 +140,14 @@ let move = (point, context) => {
         clearTimeout(context.handler);
     }
 
+    context.points = context.points.filter(point => Date.now() - point.t < 500);
+
+    context.points.push({
+        t: Date.now(),
+        x: point.clientX,
+        y: point.clientY
+    })
+
 }
 
 let end = (point, context) => {
@@ -148,7 +162,24 @@ let end = (point, context) => {
     if (context.isPress) {
         console.log('press');
     }
+    context.points = context.points.filter(point => Date.now() - point.t < 500);
+    let d,v=0;
+    if (context.points.length){
+        //开平方，默认是正数
+        d = Math.sqrt((point.clientX - context.points[0].x) ** 2 +
+            (point.clientY - context.points[0].y) ** 2);
+        v = d / (Date.now() - context.points[0].t);
+    }
+
+    if( v > 1.5 ){
+        console.log('flick');
+        context.isFlick = true;
+    }else{
+        context.isFlick = false;
+    }
+
 }
+    
 
 let cancel = (point, context) => {
     clearTimeout(context.handler);
