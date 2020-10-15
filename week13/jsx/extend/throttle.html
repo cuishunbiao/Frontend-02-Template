@@ -23,11 +23,13 @@
         let mouseDemo = document.getElementById('mouseDemo');
         mouseDemo.addEventListener('mousedown', event => {
             let startX = event.clientX;
-
             let move = throttle(event=>{
                 console.log(event)
             },100);
-
+            //对比代码
+            // let move = event=>{
+            //     console.log(event);
+            // }
             let up = () => {
                 document.removeEventListener('mousemove', move);
                 document.removeEventListener('mouseup', up);
@@ -38,12 +40,15 @@
 
         //函数节流
         function throttle(fn, delay) {
+            //先定义一个 最后的时间戳 
             let lastTimer = null;
             return function(){
+                //获取当前时间戳
                 let nowTimer = Date.now();
+                //如果最后时间没有被赋值过，并且当前时间比最后时间大于 delay 的毫秒数，则执行
                 if( !lastTimer || nowTimer - lastTimer > delay ){
-                    lastTimer = nowTimer;
-                    fn.apply(this,arguments);
+                    lastTimer = nowTimer;//赋值 最后时间戳
+                    fn.apply(this,arguments);//给定 this，然后提供 arguments 参数
                 }
             }
         };
