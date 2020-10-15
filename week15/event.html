@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        #good{
+            width: 500px;
+            height: 500px;
+            background-color: bisque;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="good"></div>
+    <script>
+
+        //先创建一个事件
+        let goodEvent = new Event('good');
+        let goodDom = document.getElementById('good');
+        goodDom.addEventListener('good',function(e){
+            console.log('good');
+        },false)
+
+        setTimeout(()=>{
+            goodDom.dispatchEvent(goodEvent);
+        },2000)
+
+    </script>
+</body>
+
+</html>
