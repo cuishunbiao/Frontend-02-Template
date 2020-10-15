@@ -13,16 +13,19 @@
         let myFunc = ()=>{
             console.log(1);
         }
-        var throttle = function(fn, delay) {
-            let timer = null;
+        let throttle = function(fn, delay) {
+            let timer = null;//先定义一个参数，做为 setTimeout 定时器的编号
             return function(){
-                clearTimeout(timer);
+                clearTimeout(timer);//无论如何，先清除定时器编号 timer
                 timer = setTimeout(()=>{
+                    //改变this,并提供参数
                     fn.apply(this,arguments)
                 },delay)
             }
         };
+        //当浏览器窗口发生变化时，执行函数；
         window.onresize = throttle(myFunc,200);
+        //window.onresize = myFunc(); //对比代码
     </script>
 </body>
 
