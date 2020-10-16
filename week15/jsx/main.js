@@ -1,6 +1,6 @@
-import {createElement} from './framework'   
-import {Carousel} from './carousel.js'
-import {Timeline, Animation} from './animation.js'
+import {createElement} from './framework';//替换 react 方法 createElement
+import {Carousel} from './carousel.js';//轮播组件
+import {Timeline, Animation} from './animation.js';//动画和时间线
 
 let imagesLists = [
     "./images/img1.jpg",

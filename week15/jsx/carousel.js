@@ -1,4 +1,7 @@
 import { Component } from './framework'
+import { enableGesture } from './gesture';
+import { Animation, Timeline } from './animation'
+import { ease } from './ease';
 
 export class Carousel extends Component {
     constructor() {
@@ -18,11 +21,14 @@ export class Carousel extends Component {
             this.root.appendChild(child);
         }
 
+        let children = this.root.children;
+
         //添加鼠标事件
         //如果使用 this.root 添加 mousemove 和 mouseup 事件，会导致鼠标移出 Demo 区事件停止，并且不能响应 up 事件
         let position = 0;//第几张
-        let children = this.root.children;
+        /*
         this.root.addEventListener('mousedown', event => {
+            let children = this.root.children;
             //获取鼠标点击的坐标
             let startX = event.clientX;
 
@@ -69,22 +75,23 @@ export class Carousel extends Component {
         })
 
 
-        // let currentIndex = 0;//当前张下标
-        // setInterval(() => {
-        //     let children = this.root.children;
-        //     let nextIndex = (currentIndex+1) % children.length;//下一张的下标
-        //     let current = children[currentIndex];
-        //     let next = children[nextIndex];
+        let currentIndex = 0;//当前张下标
+        setInterval(() => {
+            let children = this.root.children;
+            let nextIndex = (currentIndex+1) % children.length;//下一张的下标
+            let current = children[currentIndex];
+            let next = children[nextIndex];
 
-        //     next.style.transition = 'none';
-        //     next.style.transform = `translateX(${100 - nextIndex * 100}%)`;//下一张图 需向左移动 100% 
-        //     setTimeout(() => {
-        //         next.style.transition = '';
-        //         current.style.transform = `translateX(-${currentIndex * 100 + 100}%)`
-        //         next.style.transform = `translateX(-${nextIndex * 100}%)`;
-        //         currentIndex = nextIndex
-        //     }, 16);
-        // }, 3000);
+            next.style.transition = 'none';
+            next.style.transform = `translateX(${100 - nextIndex * 100}%)`;//下一张图 需向左移动 100% 
+            setTimeout(() => {
+                next.style.transition = '';
+                current.style.transform = `translateX(-${currentIndex * 100 + 100}%)`
+                next.style.transform = `translateX(-${nextIndex * 100}%)`;
+                currentIndex = nextIndex
+            }, 16);
+        }, 3000);
+        */
 
         return this.root;
     }

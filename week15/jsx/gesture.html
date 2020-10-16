@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+</head>
+
+<body oncontextmenu="event.preventDefault()">
+    <script type="module">
+        import { enableGesture } from './gesture.js';
+        enableGesture(document.documentElement)
+        document.documentElement.addEventListener('tap', () => {
+            console.log('tap event trigger...')
+        })
+        document.documentElement.addEventListener('pressend', () => {
+            console.log('pressend event trigger...')
+        })
+        document.documentElement.addEventListener('panend', () => {
+            console.log('panend event trigger...')
+        })
+        document.documentElement.addEventListener('flick', () => {
+            console.log('flick event trigger...')
+        })
+    </script>
+</body>
+
+</html>
