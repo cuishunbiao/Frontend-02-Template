@@ -138,6 +138,11 @@ export class Recognizer {
     }
     start(point, context) {
         context.startX = point.clientX, context.startY = point.clientY;
+        this.dispather.dispath('start',{
+            clientX: point.clientX,
+            clientY: point.clientY
+        })
+
         //初始化一个数组
         context.points = [{
             t: Date.now(),
@@ -206,8 +211,29 @@ export class Recognizer {
         }
 
         if (context.isPress) {
-            this.dispather.dispath('pressend', {})
+            this.dispather.dispath('pressend', {
+                startX: context.startX,
+                startY: context.startY,
+                clientX: point.clientX,
+                clientY: point.clientY,
+                isVertical: context.isVertical,
+                isFlick: context.isFlick,
+                velocity: v
+            })
         }
+
+        if (context.isPress) {
+            this.dispather.dispath('end', {
+                startX: context.startX,
+                startY: context.startY,
+                clientX: point.clientX,
+                clientY: point.clientY,
+                isVertical: context.isVertical,
+                isFlick: context.isFlick,
+                velocity: v
+            })
+        }
+
         context.points = context.points.filter(point => Date.now() - point.t < 500);
         let d, v = 0;
         if (context.points.length) {

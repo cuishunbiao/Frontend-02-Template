@@ -8,14 +8,12 @@ let imagesLists = [
     "./images/img3.jpg",
     "./images/img4.jpg"
 ]
-
 let label = <Carousel src={imagesLists} />
 //反向操作
 label.mountTo(document.body);
 
 let tl = new Timeline();//实例化
 
-window.tl = tl;
+//window.tl = tl;
 window.animation = new Animation({ set a(v) { console.log(v) } }, 'a', 0, 100, 1000, null);//添加 Animation 动画
-
-tl.start();//开始执行 Tcik 函数
+//tl.start();//开始执行 Tcik 函数
