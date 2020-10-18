@@ -19,7 +19,6 @@ export class Timeline {
         this.state = "started";
         let startTime = Date.now();
         this[PAUSE_TIME] = 0;//开始时为0
-        console.log('startTime ',startTime)
         this[TICK] = () => {
             let now = Date.now();//Date.now() 实时变化
             for(let animation of this[ANIMATIONS]){
@@ -54,7 +53,6 @@ export class Timeline {
         if (this.state !== 'pause') return;
         this.state = "resume";
         this[PAUSE_TIME] += Date.now() - this[PAUSE_START];
-        console.log(Date.now(),this[PAUSE_START])
         this[TICK]();
     }
 
@@ -78,7 +76,6 @@ export class Timeline {
         }
         this[ANIMATIONS].add(animation);
         this[START_TIME].set(animation, startTime);
-        console.log(this[START_TIME]);
     }
 }
 
@@ -110,7 +107,6 @@ export class Animation {
     }
     //执行
     receive(time) {
-        console.log(time)
         //变化区间  this.startValue + (this.endValue - this.startValue)
         let range = this.endValue - this.startValue;
         let progress = this.timeFunction(time / this.duration);

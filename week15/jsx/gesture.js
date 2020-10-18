@@ -222,18 +222,6 @@ export class Recognizer {
             })
         }
 
-        if (context.isPress) {
-            this.dispather.dispath('end', {
-                startX: context.startX,
-                startY: context.startY,
-                clientX: point.clientX,
-                clientY: point.clientY,
-                isVertical: context.isVertical,
-                isFlick: context.isFlick,
-                velocity: v
-            })
-        }
-
         context.points = context.points.filter(point => Date.now() - point.t < 500);
         let d, v = 0;
         if (context.points.length) {
@@ -265,9 +253,20 @@ export class Recognizer {
                 clientX: point.clientX,
                 clientY: point.clientY,
                 isVertical: context.isVertical,
-                isFlick: context.isFlick
+                isFlick: context.isFlick,
+                velocity: v
             })
         }
+
+        this.dispather.dispath('end', {
+            startX: context.startX,
+            startY: context.startY,
+            clientX: point.clientX,
+            clientY: point.clientY,
+            isVertical: context.isVertical,
+            isFlick: context.isFlick,
+            velocity: v
+        })
 
     }
     //取消

@@ -12,38 +12,65 @@ export function createElement(type, attributes, ...children) {
         element.setAttribute(attr, attributes[attr])
     }
     //把所有子元素添加到 Dom 里
-    for (let child of children) {
-        if (typeof child === 'string') {
-            child = new TextWrapper(child);
+    let processChildren = (children) => {
+        for (let child of children) {
+            if ((typeof child === 'object') && (child instanceof Array)) {
+                processChildren(child);
+                continue;
+            }
+            if (typeof child === 'string') {
+                child = new TextWrapper(child);
+            }
+            element.appendChild(child);
         }
-        element.appendChild(child);
     }
+    processChildren(children);
     return element;
 }
 
+export const STATE = Symbol('state');
+export const ATTRIBUTE = Symbol('attribute');
+
 //公共的
-export class Component{
-    constructor(type){
+export class Component {
+    constructor(type) {
+        this[ATTRIBUTE] = Object.create(null);
+        this[STATE] = Object.create(null);
+    }
+    render() {
+        return this.root;
     }
     setAttribute(name, value) {
-        this.root.setAttribute(name, value)
+        this[ATTRIBUTE][name] = value;
     }
     appendChild(children) {
+        console.log(children);
+        console.log(this.root);
         children.mountTo(this.root);
     }
     mountTo(parent) {
+        if (!this.root)
+            this.render();
         parent.appendChild(this.root);
+    }
+    triggerEvent(type, args) {
+        this[ATTRIBUTE]['on' + type.replace(/^[\s\S]/, s => s.toUpperCase())](new CustomEvent(type, { detail: { ...args, key: '自己的key' } }))
     }
 }
 
 class TextWrapper extends Component {
     constructor(content) {
+        super();
         this.root = document.createTextNode(content);
     }
 }
 
 class ElementWrapper extends Component {
     constructor(type) {
+        super();
         this.root = document.createElement(type);
+    }
+    setAttribute(name, value) {
+        this.root.setAttribute(name, value);
     }
 }
