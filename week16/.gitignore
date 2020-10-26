@@ -1,3 +1,5 @@
 demo/node_modules
 demo-home/node_modules
 dist/node_modules
+home-vue-demo/node_modules
+generator-home-vue/node_modules
