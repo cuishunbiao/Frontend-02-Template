@@ -10,3 +10,6 @@ export 在 Nodejs 里默认不能使用
 
 ## .babelrc 说明转成什么文件
 
+
+
+## Node modules 脚本默认加 ./node_modules/.bin/
