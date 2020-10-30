@@ -13,3 +13,6 @@ export 在 Nodejs 里默认不能使用
 
 
 ## Node modules 脚本默认加 ./node_modules/.bin/
+
+
+## 测试是否全面 nyc 

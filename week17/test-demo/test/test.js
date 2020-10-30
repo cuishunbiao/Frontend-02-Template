@@ -1,15 +1,15 @@
 var assert = require('assert');
 import { format } from 'path';
-import { add } from '../add'
+import {add,mul} from '../add'
 
 describe('Add', function () {
     it('1+1=2', function () {
         assert.equal(add(1, 1), 2);
     })
-    it('-1+-1=-2', function () {
-        assert.equal(add(-1, -1), -2);
-    })
-    it('100+2000=2100', function () {
-        assert.equal(add(100, 2000), 2100);
-    })
 });
+
+describe('Mul', function(){
+    it('2*2=4', function () {
+        assert.equal(mul(2, 2), 4);
+    })
+})
